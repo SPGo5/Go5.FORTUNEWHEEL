@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>道德經 Fortune Wheel · Tao Te Ching</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Klee+One&family=Shalimar&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #000073;
+    --gold:      #b8860b;
+    --gold-light:#d4a843;
+    --vermillion:#c0392b;
+    --col-no:    #ccff00;
+    --col-zh:    #ffff00;
+    --col-hv:    #E0B0FF;
+    --col-en:    #CBFFC0;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { height:100%; overflow:hidden; }
+
+  body {
+    background:var(--bg);
+    font-family:'Cormorant Garamond',serif;
+    background-image:
+      radial-gradient(ellipse at 30% 10%, rgba(0,0,180,0.4) 0%, transparent 55%),
+      radial-gradient(ellipse at 70% 90%, rgba(0,0,120,0.3) 0%, transparent 55%),
+      url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23b8860b' fill-opacity='0.05'%3E%3Cpath d='M50 50v-6h-3v6h-6v3h6v6h3v-6h6v-3h-6zm0-40V4h-3v6h-6v3h6v6h3v-6h6V4h-6zM10 50v-6H7v6H1v3h6v6h3v-6h6v-3h-6zM10 10V4H7v6H1v3h6v6h3v-6h6v-3h-6z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* ════════════════════════════════════════════
+     SCREEN MANAGER — two full screens
+  ════════════════════════════════════════════ */
+  .screen {
+    position:fixed; inset:0;
+    transition: transform 0.45s cubic-bezier(0.77,0,0.18,1),
+                opacity   0.45s ease;
+    will-change: transform, opacity;
+  }
+  /* Wheel screen */
+  #wheelScreen {
+    overflow-y:auto; overflow-x:hidden;
+    transform:translateX(0); opacity:1; z-index:10;
+  }
+  #wheelScreen.slide-out {
+    transform:translateX(-100%); opacity:0; pointer-events:none;
+  }
+  /* Chapter screen */
+  #chapterScreen {
+    transform:translateX(100%); opacity:0; pointer-events:none; z-index:20;
+    overflow-y:auto; overflow-x:hidden;
+  }
+  #chapterScreen.slide-in {
+    transform:translateX(0); opacity:1; pointer-events:all;
+  }
+
+  /* ════════ WHEEL SCREEN ════════ */
+  .wheel-page {
+    display:flex; flex-direction:column; align-items:center;
+    padding-bottom:40px; min-height:100%;
+  }
+  .header { text-align:center; padding:36px 20px 16px; }
+  .header::before {
+    content:'☯'; display:block; font-size:32px; color:var(--gold);
+    margin-bottom:6px; animation:slowSpin 24s linear infinite;
+    filter:drop-shadow(0 0 8px rgba(184,134,11,0.8));
+  }
+  @keyframes slowSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  .title-zh {
+    font-family:'Klee One',cursive; font-size:clamp(28px,6vw,50px);
+    color:var(--col-zh); letter-spacing:0.2em;
+    text-shadow:0 0 18px rgba(255,255,0,0.7),0 0 40px rgba(255,255,0,0.35);
+  }
+  .title-en {
+    font-style:italic; font-size:clamp(13px,2.5vw,18px);
+    color:var(--col-en); letter-spacing:0.1em; margin-top:6px;
+  }
+  .divider {
+    width:140px; height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    margin:16px auto;
+  }
+
+  /* Wheel */
+  .wheel-section { display:flex; flex-direction:column; align-items:center; gap:20px; padding:0 20px 20px; width:100%; }
+  .wheel-wrapper { position:relative; width:min(500px,94vw); height:min(500px,94vw); }
+  .wheel-wrapper::before {
+    content:''; position:absolute; inset:-9px; border-radius:50%;
+    background:conic-gradient(var(--gold) 0deg,var(--gold-light) 45deg,var(--gold) 90deg,var(--gold-light) 135deg,var(--gold) 180deg,var(--gold-light) 225deg,var(--gold) 270deg,var(--gold-light) 315deg,var(--gold) 360deg);
+    z-index:0; filter:drop-shadow(0 0 10px rgba(184,134,11,0.6));
+  }
+  .wheel-wrapper::after { content:''; position:absolute; inset:-4px; border-radius:50%; background:var(--bg); z-index:1; }
+  #wheelCanvas { position:relative; z-index:2; border-radius:50%; box-shadow:0 8px 40px rgba(0,0,0,0.5),0 0 30px rgba(0,0,180,0.4); display:block; }
+  .pointer-wrap { position:absolute; top:-16px; left:50%; transform:translateX(-50%); z-index:10; display:flex; align-items:center; }
+  .pointer { width:0; height:0; border-left:13px solid transparent; border-right:13px solid transparent; border-top:30px solid var(--vermillion); filter:drop-shadow(0 3px 10px rgba(192,57,43,0.8)); }
+  .hub {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:52px; height:52px; border-radius:50%;
+    background:radial-gradient(circle at 35% 35%,#3333ff,#000073);
+    border:3px solid var(--gold); z-index:10;
+    box-shadow:0 0 16px rgba(184,134,11,0.6),0 2px 12px rgba(0,0,0,0.5);
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px; pointer-events:none;
+    text-shadow:0 0 8px rgba(184,134,11,0.9);
+  }
+
+  /* RNG */
+  .rng-label { font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold-light); text-align:center; }
+  .rng-selector { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .rng-btn {
+    font-size:13px; letter-spacing:0.03em; color:var(--gold-light);
+    background:rgba(0,0,80,0.6); border:1.5px solid rgba(184,134,11,0.35);
+    border-radius:24px; padding:9px 20px; cursor:pointer;
+    transition:all 0.22s ease; user-select:none; display:flex; align-items:center; gap:5px;
+  }
+  .rng-btn:hover { border-color:var(--gold); color:#fff; }
+  .rng-btn.active {
+    background:rgba(0,0,60,0.9); color:var(--gold-light); border-color:var(--gold);
+    box-shadow:0 0 0 2px var(--gold),0 0 18px 5px rgba(184,134,11,0.5);
+    transform:scale(1.07) translateY(1px); font-weight:600;
+  }
+  .rng-btn .recommended { font-family:'Crimson Pro',serif; font-style:italic; font-size:11px; color:#ff6b6b; display:none; }
+  .rng-btn.show-rec .recommended { display:inline; }
+  .rng-status { font-size:11px; color:var(--gold-light); letter-spacing:0.05em; font-family:monospace; min-height:15px; text-align:center; opacity:0.8; }
+
+  /* Spin button */
+  .spin-btn {
+    font-size:16px; font-weight:600; letter-spacing:0.12em; color:#fff;
+    background:linear-gradient(135deg,#8B0000,#c0392b,#8B0000);
+    border:1px solid rgba(184,134,11,0.5); border-radius:40px; padding:14px 48px;
+    cursor:pointer; transition:all 0.25s ease;
+    box-shadow:0 4px 20px rgba(192,57,43,0.4),0 0 30px rgba(192,57,43,0.2);
+  }
+  .spin-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 32px rgba(192,57,43,0.6); }
+  .spin-btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+  /* ANU popup */
+  .anu-popup {
+    display:none; position:fixed; inset:0; z-index:1000;
+    background:rgba(0,0,40,0.88); backdrop-filter:blur(6px);
+    align-items:center; justify-content:center;
+  }
+  .anu-popup.visible { display:flex; }
+  .popup-box {
+    background:linear-gradient(135deg,#00005a,#000073);
+    border:1px solid var(--gold); border-radius:8px;
+    padding:32px 36px; max-width:420px; width:90%;
+    box-shadow:0 0 40px rgba(0,0,180,0.4); text-align:center;
+  }
+  .popup-box h3 { font-size:20px; color:var(--col-zh); letter-spacing:0.1em; margin-bottom:10px; text-shadow:0 0 12px rgba(255,255,0,0.5); }
+  .popup-box p { font-family:'Crimson Pro',serif; font-size:15px; color:var(--col-en); margin-bottom:24px; line-height:1.6; }
+  .popup-choices { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .popup-choice {
+    font-size:14px; color:var(--gold-light); background:rgba(0,0,80,0.8);
+    border:1.5px solid var(--gold); border-radius:24px; padding:10px 22px;
+    cursor:pointer; transition:all 0.2s ease; display:flex; flex-direction:column; align-items:center; gap:3px;
+  }
+  .popup-choice:hover { background:rgba(0,0,120,0.9); box-shadow:0 0 12px rgba(184,134,11,0.4); }
+  .popup-choice .rec { font-family:'Crimson Pro',serif; font-style:italic; font-size:11px; color:#ff6b6b; }
+
+  /* ════════ CHAPTER SCREEN ════════ */
+  #chapterScreen {
+    background:var(--bg);
+    background-image:
+      radial-gradient(ellipse at 30% 10%, rgba(0,0,180,0.4) 0%, transparent 55%),
+      radial-gradient(ellipse at 70% 90%, rgba(0,0,120,0.3) 0%, transparent 55%);
+  }
+
+  .chapter-page { min-height:100%; display:flex; flex-direction:column; }
+
+  /* Top bar */
+  .chapter-topbar {
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 20px;
+    background:rgba(0,0,50,0.92); backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(184,134,11,0.25);
+    flex-shrink:0;
+  }
+  .back-btn {
+    font-size:14px; color:var(--gold-light); cursor:pointer;
+    display:flex; align-items:center; gap:6px;
+    transition:color 0.2s; user-select:none; background:none; border:none;
+    font-family:'Cormorant Garamond',serif; letter-spacing:0.05em;
+  }
+  .back-btn:hover { color:#fff; }
+  .back-btn::before { content:'←'; font-size:18px; }
+
+  .download-btn {
+    font-family:'Crimson Pro',serif; font-size:13px; font-weight:600;
+    color:#000; background:linear-gradient(135deg,var(--col-no),#aadd00);
+    border:none; border-radius:20px; padding:7px 16px;
+    cursor:pointer; transition:all 0.2s ease;
+    box-shadow:0 2px 10px rgba(204,255,0,0.3); white-space:nowrap;
+  }
+  .download-btn:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(204,255,0,0.5); }
+  .download-btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+  /* Chapter content area */
+  .chapter-body { flex:1; padding:24px 28px 48px; max-width:800px; margin:0 auto; width:100%; }
+
+  /* Title block — same stacked format as lines */
+  .chapter-title-block {
+    padding-bottom:18px;
+    border-bottom:1px solid rgba(184,134,11,0.3);
+    margin-bottom:4px;
+  }
+  .title-no-row {
+    display:flex; align-items:baseline; gap:14px; margin-bottom:6px;
+  }
+  .t-no {
+    font-family:'Klee One',cursive; font-size:20px; font-weight:700;
+    color:var(--col-no); flex-shrink:0;
+    text-shadow:0 0 10px rgba(204,255,0,0.7),0 0 24px rgba(204,255,0,0.4);
+  }
+  /* Title stacked sublines */
+  .title-stack { display:flex; flex-direction:column; gap:2px; }
+  .t-zh {
+    font-family:'Klee One',cursive; font-size:20px; font-weight:700;
+    color:var(--col-zh); letter-spacing:0.12em;
+    text-shadow:0 0 14px rgba(255,255,0,0.85),0 0 32px rgba(255,255,0,0.45);
+  }
+  .t-hv { font-family:'Shalimar',cursive; font-size:34px; color:var(--col-hv); line-height:1.2; }
+  .t-en { font-style:italic; font-size:20px; font-weight:700; color:var(--col-en); line-height:1.4; }
+
+  /* Flower */
+  .flower-divider { text-align:center; padding:16px 0 12px; }
+  .flower-divider img {
+    height:min(140px,18vw);
+    width:auto;
+    filter:
+      drop-shadow(0 0 10px rgba(180,140,255,0.75))
+      drop-shadow(0 0 24px rgba(180,140,255,0.45))
+      drop-shadow(0 0 50px rgba(120,90,220,0.28));
+  }
+
+  /* Content lines */
+  .content-line {
+    display:grid;
+    grid-template-columns:44px 1fr;
+    gap:0 16px;
+    padding:14px 0;
+    border-bottom:1px solid rgba(184,134,11,0.1);
+    align-items:start;
+  }
+  .content-line:last-child { border-bottom:none; }
+  .c-no {
+    font-size:20px; font-weight:700;
+    color:var(--col-no); text-align:center; padding-top:3px;
+    text-shadow:0 0 8px rgba(204,255,0,0.5);
+    grid-row:1/4; align-self:start;
+  }
+  .c-zh {
+    font-family:'Klee One',cursive; font-size:20px; line-height:1.65;
+    color:var(--col-zh);
+    text-shadow:0 0 12px rgba(255,255,0,0.8),0 0 28px rgba(255,255,0,0.4);
+  }
+  .c-hv { font-family:'Shalimar',cursive; font-size:30px; line-height:1.3; color:var(--col-hv); }
+  .c-en { font-style:italic; font-size:20px; line-height:1.55; color:var(--col-en); }
+
+  /* Footer src line */
+  .chapter-footer {
+    text-align:center; padding:10px 20px 20px;
+    font-size:11px; color:rgba(212,168,67,0.5);
+    letter-spacing:0.07em; font-family:monospace; flex-shrink:0;
+  }
+
+  /* Swipe hint */
+  .swipe-hint {
+    text-align:center; font-family:'Crimson Pro',serif; font-style:italic;
+    font-size:12px; color:rgba(184,134,11,0.45); letter-spacing:0.1em;
+    padding-bottom:8px; flex-shrink:0;
+  }
+
+  @media (max-width:560px) {
+    .content-line { grid-template-columns:32px 1fr; gap:0 10px; }
+    .c-hv { font-size:24px; }
+    .c-en { font-size:17px; }
+    .t-hv { font-size:26px; }
+    .chapter-body { padding:18px 16px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ WHEEL SCREEN ══════════ -->
+<div class="screen" id="wheelScreen">
+  <div class="wheel-page">
+
+    <div class="header">
+      <div class="title-zh">道德經</div>
+      <div class="title-en">Tao Te Ching · Fortune Wheel</div>
+      <div class="divider"></div>
+    </div>
+
+    <div class="wheel-section">
+      <div class="wheel-wrapper">
+        <canvas id="wheelCanvas"></canvas>
+        <div class="pointer-wrap"><div class="pointer"></div></div>
+        <div class="hub">☯</div>
+      </div>
+
+      <div class="rng-label">Entropy Source</div>
+      <div class="rng-selector">
+        <button class="rng-btn active" id="rng-anu" onclick="selectRNG('anu')">⚛ Quantum (ANU)</button>
+        <button class="rng-btn" id="rng-atm" onclick="selectRNG('atm')">
+          🌩 Atmospheric <span class="recommended">(recommended)</span>
+        </button>
+        <button class="rng-btn" id="rng-crypto" onclick="selectRNG('crypto')">🔒 Browser Crypto</button>
+      </div>
+      <div class="rng-status" id="rngStatus">⚛ Quantum (ANU) selected</div>
+      <button class="spin-btn" id="spinBtn" onclick="spinWheel()">Get your wisdom of the day</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ CHAPTER SCREEN ══════════ -->
+<div class="screen" id="chapterScreen">
+  <div class="chapter-page" id="chapterPageInner">
+
+    <div class="chapter-topbar">
+      <button class="back-btn" onclick="goBack()"> Back to Fortune Wheel</button>
+      <button class="download-btn" id="dlBtn" onclick="downloadCard()">⬇ Save as Image</button>
+    </div>
+
+    <div class="chapter-body" id="chapterBody">
+      <!-- filled dynamically -->
+    </div>
+
+    <div class="chapter-footer" id="chapterFooter"></div>
+    <div class="swipe-hint">← swipe right to return to wheel</div>
+
+  </div>
+</div>
+
+<!-- ANU popup -->
+<div class="anu-popup" id="anuPopup">
+  <div class="popup-box">
+    <h3>⚛ ANU Quantum RNG unavailable</h3>
+    <p>The Australian National University quantum server could not be reached.<br>Please choose your entropy source to continue:</p>
+    <div class="popup-choices">
+      <div class="popup-choice" onclick="resolveANU('atm')">
+        🌩 Atmospheric<br>Random.org
+        <span class="rec">(recommended)</span>
+      </div>
+      <div class="popup-choice" onclick="resolveANU('crypto')">
+        🔒 Browser<br>Crypto
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyF1TjNDmeBqi-vlHx5GSzxQ_Zb54PLyMqcUoACNqjjc2GXBxaqcDmsH97SlAmSOGkd/exec';
+
+// ── Screen navigation ─────────────────────────────────────────────────────────
+function showChapterScreen() {
+  document.getElementById('wheelScreen').classList.add('slide-out');
+  document.getElementById('chapterScreen').classList.add('slide-in');
+  document.getElementById('chapterScreen').scrollTop = 0;
+}
+function goBack() {
+  document.getElementById('chapterScreen').classList.remove('slide-in');
+  document.getElementById('wheelScreen').classList.remove('slide-out');
+}
+
+// ── Swipe detection ───────────────────────────────────────────────────────────
+let touchStartX = 0, touchStartY = 0;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive:true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+  if (Math.abs(dx) < 50 || dy > 80) return; // not a horizontal swipe
+  const chapterVisible = document.getElementById('chapterScreen').classList.contains('slide-in');
+  if (dx > 0 && chapterVisible)  goBack();        // swipe right → back to wheel
+  if (dx < 0 && !chapterVisible && lastChapterData) showChapterScreen(); // swipe left → chapter
+}, { passive:true });
+
+// ── RNG ───────────────────────────────────────────────────────────────────────
+let selectedRNG = 'anu', anuResolve = null;
+
+function selectRNG(mode) {
+  selectedRNG = mode;
+  document.querySelectorAll('.rng-btn').forEach(b => b.classList.remove('active','show-rec'));
+  document.getElementById('rng-'+mode).classList.add('active');
+  const labels = { anu:'⚛ Quantum (ANU) selected', atm:'🌩 Atmospheric (Random.org) selected', crypto:'🔒 Browser Crypto selected' };
+  document.getElementById('rngStatus').textContent = labels[mode];
+}
+function resolveANU(choice) {
+  document.getElementById('anuPopup').classList.remove('visible');
+  if (choice==='atm') document.getElementById('rng-atm').classList.add('show-rec');
+  selectRNG(choice);
+  if (anuResolve) { anuResolve(choice); anuResolve=null; }
+}
+function showANUPopup() {
+  return new Promise(r => { anuResolve=r; document.getElementById('anuPopup').classList.add('visible'); });
+}
+
+async function getRandom81_ANU() {
+  const r = await fetch('https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8',{signal:AbortSignal.timeout(5000)});
+  const d = await r.json(); if(!d.success) throw 0;
+  return (d.data[0]%81)+1;
+}
+async function getRandom81_ATM() {
+  const r = await fetch('https://www.random.org/integers/?num=1&min=1&max=81&col=1&base=10&format=plain&rnd=new',{signal:AbortSignal.timeout(6000)});
+  if(!r.ok) throw 0;
+  const n=parseInt((await r.text()).trim()); if(isNaN(n)) throw 0; return n;
+}
+function getRandom81_Crypto() {
+  const a=new Uint32Array(1); crypto.getRandomValues(a); return (a[0]%81)+1;
+}
+
+async function getRandomNumber() {
+  const st = document.getElementById('rngStatus');
+  if (selectedRNG==='anu') {
+    try {
+      st.textContent='⚛ Querying ANU quantum vacuum…';
+      const n=await getRandom81_ANU(); st.textContent='⚛ ANU Quantum RNG';
+      return {n, src:'⚛ ANU Quantum RNG'};
+    } catch {
+      st.textContent='⚛ ANU unavailable…';
+      const choice=await showANUPopup();
+      if (choice==='atm') {
+        try { const n=await getRandom81_ATM(); return {n,src:'🌩 Atmospheric RNG via Random.org'}; } catch{}
+      }
+      return {n:getRandom81_Crypto(), src:'🔒 Browser Web Crypto API'};
+    }
+  } else if (selectedRNG==='atm') {
+    try { st.textContent='🌩 Sampling atmospheric noise…'; const n=await getRandom81_ATM(); st.textContent='🌩 Atmospheric RNG'; return {n,src:'🌩 Atmospheric RNG via Random.org'}; }
+    catch { return {n:getRandom81_Crypto(), src:'🔒 Browser Web Crypto API (ATM fallback)'}; }
+  } else {
+    st.textContent='🔒 Generating cryptographic entropy…';
+    const n=getRandom81_Crypto(); st.textContent='🔒 Browser Crypto RNG';
+    return {n,src:'🔒 Browser Web Crypto API'};
+  }
+}
+
+// ── Wheel canvas ──────────────────────────────────────────────────────────────
+const canvas=document.getElementById('wheelCanvas'), ctx=canvas.getContext('2d');
+const NUM=81, ARC=(2*Math.PI)/NUM;
+
+function resizeCanvas() { const s=Math.min(500,window.innerWidth*0.94); canvas.width=s; canvas.height=s; }
+
+function drawWheel(rot) {
+  const w=canvas.width,h=canvas.height,cx=w/2,cy=h/2,R=w/2-4;
+  ctx.clearRect(0,0,w,h);
+  ctx.save(); ctx.translate(cx,cy); ctx.rotate(rot);
+  ctx.beginPath(); ctx.arc(0,0,R,-Math.PI/2,Math.PI/2); ctx.fillStyle='#1a1a8c'; ctx.fill();
+  ctx.beginPath(); ctx.arc(0,0,R,Math.PI/2,-Math.PI/2); ctx.fillStyle='#00003a'; ctx.fill();
+  const sm=R/2;
+  ctx.beginPath(); ctx.arc(0,-sm,sm,0,Math.PI*2); ctx.fillStyle='#1a1a8c'; ctx.fill();
+  ctx.beginPath(); ctx.arc(0,sm,sm,0,Math.PI*2); ctx.fillStyle='#00003a'; ctx.fill();
+  ctx.beginPath(); ctx.arc(0,-sm,R/12,0,Math.PI*2); ctx.fillStyle='#00003a'; ctx.fill();
+  ctx.beginPath(); ctx.arc(0,sm,R/12,0,Math.PI*2); ctx.fillStyle='#d4a843'; ctx.fill();
+  ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2); ctx.strokeStyle='#b8860b'; ctx.lineWidth=3; ctx.stroke();
+  ctx.restore();
+  for(let i=0;i<NUM;i++){
+    const a=rot+i*ARC-Math.PI/2;
+    ctx.beginPath(); ctx.moveTo(cx+R*0.48*Math.cos(a),cy+R*0.48*Math.sin(a));
+    ctx.lineTo(cx+R*0.95*Math.cos(a),cy+R*0.95*Math.sin(a));
+    ctx.strokeStyle='rgba(184,134,11,0.35)'; ctx.lineWidth=0.8; ctx.stroke();
+  }
+  const lr=R*0.855, fs=Math.max(7,R*0.046);
+  ctx.font=`bold ${fs}px "Cormorant Garamond",serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+  for(let i=0;i<NUM;i++){
+    const mid=rot+i*ARC-Math.PI/2+ARC/2;
+    ctx.save(); ctx.translate(cx+lr*Math.cos(mid),cy+lr*Math.sin(mid)); ctx.rotate(mid+Math.PI/2);
+    const rel=((mid-rot)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
+    ctx.fillStyle=(rel<=Math.PI/2||rel>=3*Math.PI/2)?'#ccff00':'#d4a843';
+    ctx.fillText(i+1,0,0); ctx.restore();
+  }
+}
+
+// ── Spin ──────────────────────────────────────────────────────────────────────
+let isSpinning=false, currentRotation=0, lastChapterData=null, lastSrc='', lastChapterNum=null;
+
+async function spinWheel() {
+  if(isSpinning) return;
+  isSpinning=true; document.getElementById('spinBtn').disabled=true;
+
+  const {n:chapter,src}=await getRandomNumber();
+  lastChapterNum=chapter; lastSrc=src;
+
+  const targetCenter=(chapter-1)*ARC+ARC/2;
+  const delta=-Math.PI/2-targetCenter+(6+Math.floor(Math.random()*4))*2*Math.PI;
+  const duration=5000, startTime=performance.now(), startRot=currentRotation;
+  function easeOut(t){return 1-Math.pow(1-t,3);}
+
+  await new Promise(res=>{
+    function animate(now){
+      const t=Math.min((now-startTime)/duration,1);
+      drawWheel(startRot+delta*easeOut(t));
+      if(t<1){requestAnimationFrame(animate);}
+      else{currentRotation=startRot+delta;drawWheel(currentRotation);res();}
+    }
+    requestAnimationFrame(animate);
+  });
+
+  document.getElementById('rngStatus').textContent=`✦ Chapter ${chapter} — consulting the Tao…`;
+  try {
+    const data=await fetchChapter(chapter);
+    lastChapterData=data;
+    renderChapter(data,src);
+    showChapterScreen();
+  } catch(err) {
+    document.getElementById('rngStatus').textContent=`⚠ Could not reach Google Sheet: ${err.message}`;
+  }
+  isSpinning=false; document.getElementById('spinBtn').disabled=false;
+}
+
+// ── Fetch ─────────────────────────────────────────────────────────────────────
+async function fetchChapter(n) {
+  const r=await fetch(`${APPS_SCRIPT_URL}?chapter=${n}`,{signal:AbortSignal.timeout(12000)});
+  if(!r.ok) throw new Error('fetch failed');
+  const d=await r.json(); if(!d.success) throw new Error(d.error||'unknown');
+  return d;
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function renderChapter(data,src) {
+  const body = document.getElementById('chapterBody');
+  body.innerHTML = '';
+
+  // Title block — same stacked format: number | zh / hv / en
+  const titleBlock = document.createElement('div');
+  titleBlock.className = 'chapter-title-block';
+  titleBlock.innerHTML = `
+    <div class="title-no-row">
+      <span class="t-no">${data.chapter}</span>
+      <div class="title-stack">
+        <div class="t-zh">${data.title.zh}</div>
+        <div class="t-hv">${data.title.hv}</div>
+        <div class="t-en">${data.title.en}</div>
+      </div>
+    </div>
+  `;
+  body.appendChild(titleBlock);
+
+  // Flower — 1/3 height
+  const flower = document.createElement('div');
+  flower.className = 'flower-divider';
+  flower.innerHTML = `<img src="https://i.postimg.cc/sXYKGqbp/Momo-Hanoi-Old-Quarter-Temple.png" alt="flower" crossorigin="anonymous">`;
+  body.appendChild(flower);
+
+  // Content lines — stacked zh / hv / en
+  data.lines.forEach(line => {
+    const div=document.createElement('div');
+    div.className='content-line';
+    div.innerHTML=`
+      <span class="c-no">${line.no}</span>
+      <div>
+        <div class="c-zh">${line.zh}</div>
+        <div class="c-hv">${line.hv}</div>
+        <div class="c-en">${line.en}</div>
+      </div>
+    `;
+    body.appendChild(div);
+  });
+
+  const now=new Date();
+  document.getElementById('chapterFooter').textContent=
+    `${src}  ·  Ch.${data.chapter}  ·  ${now.toLocaleTimeString()}`;
+}
+
+// ── Download PNG ──────────────────────────────────────────────────────────────
+async function downloadCard() {
+  const btn=document.getElementById('dlBtn');
+  btn.disabled=true; btn.textContent='⏳ Rendering…';
+  try {
+    const target=document.getElementById('chapterPageInner');
+    const cvs=await html2canvas(target,{
+      backgroundColor:'#000073', scale:2, useCORS:true, allowTaint:true, logging:false,
+      windowWidth:target.scrollWidth, windowHeight:target.scrollHeight
+    });
+    const link=document.createElement('a');
+    const now=new Date();
+    const dateStr=now.toISOString().slice(0,10);
+    const timeStr=now.toTimeString().slice(0,8).replace(/:/g,'-');
+    link.download=`DDJ Chapter ${lastChapterNum} ${dateStr} ${timeStr}.png`;
+    link.href=cvs.toDataURL('image/png'); link.click();
+  } catch(e) { alert('Could not render: '+e.message); }
+  btn.disabled=false; btn.textContent='⬇ Save as Image';
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+resizeCanvas(); drawWheel(0);
+window.addEventListener('resize',()=>{resizeCanvas();drawWheel(currentRotation);});
+</script>
+</body>
+</html>
