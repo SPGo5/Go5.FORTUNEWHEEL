@@ -83,6 +83,9 @@
   .back-btn::before{content:'←';font-size:18px;}
   .dl-btn{font-family:'Crimson Pro',serif;font-size:13px;font-weight:600;color:#000;background:linear-gradient(135deg,var(--no),#aadd00);border:none;border-radius:20px;padding:7px 16px;cursor:pointer;}
   .dl-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .copy-btn{font-family:'Crimson Pro',serif;font-size:13px;font-weight:600;color:#000;background:linear-gradient(135deg,#E0B0FF,#c070ff);border:none;border-radius:20px;padding:7px 16px;cursor:pointer;transition:all .2s;box-shadow:0 2px 10px rgba(180,140,255,.3);}
+  .copy-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(180,140,255,.5);}
+  .copy-btn:disabled{opacity:.5;cursor:not-allowed;}
 
   /* ══ SCROLL WRAPPER — centers the card on screen ══ */
   .ch-scroll{flex:1;padding:28px 20px 48px;display:flex;justify-content:center;align-items:flex-start;}
@@ -193,7 +196,10 @@
   <div class="ch-page">
     <div class="ch-topbar">
       <button class="back-btn" onclick="goBack()"> Back to Fortune Wheel</button>
-      <button class="dl-btn" id="dlBtn" onclick="downloadCard()">⬇ Save as Image</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="copy-btn" id="copyBtn" onclick="copyText()">Copy text 📋</button>
+        <button class="dl-btn" id="dlBtn" onclick="downloadCard()">Save as image 📷</button>
+      </div>
     </div>
     <div class="ch-scroll">
       <div id="exportCard">
@@ -393,6 +399,51 @@ function render(data,src){
   document.getElementById('footMethod').textContent=src;
   document.getElementById('footTime').textContent=
     now.toLocaleDateString()+' '+now.toLocaleTimeString();
+}
+
+// ── Copy text content ────────────────────────────────────────────────────────
+async function copyText(){
+  const btn=document.getElementById('copyBtn');
+  btn.disabled=true;btn.textContent='Copying…';
+
+  if(!lastData){btn.disabled=false;btn.textContent='Copy text 📋';return;}
+
+  const d=lastData;
+  const now=new Date();
+  let text='';
+
+  // Chapter number + titles
+  text += `Chapter ${d.chapter}\n`;
+  text += `${d.title.zh}\n`;
+  text += `${d.title.hv}\n`;
+  text += `${d.title.en}\n`;
+  text += '\n';
+
+  // Content lines
+  d.lines.forEach(l=>{
+    text += `${l.no}. ${l.zh}\n`;
+    text += `   ${l.hv}\n`;
+    text += `   ${l.en}\n`;
+    text += '\n';
+  });
+
+  // Footer
+  text += `${lastSrc} · ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+
+  try{
+    await navigator.clipboard.writeText(text);
+    btn.textContent='Copied ✓';
+    setTimeout(()=>{btn.disabled=false;btn.textContent='Copy text 📋';},2000);
+  }catch(e){
+    // Fallback for browsers that block clipboard
+    const ta=document.createElement('textarea');
+    ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent='Copied ✓';
+    setTimeout(()=>{btn.disabled=false;btn.textContent='Copy text 📋';},2000);
+  }
 }
 
 // ── Download — exportCard only, no topbar ────────────────────────────────────
