@@ -274,7 +274,7 @@ button:active,[onclick]:active{opacity:.75!important;transform:scale(0.96)!impor
 <div id="screen-fw-login" class="screen active">
   <div class="fw-login-card">
     <div style="font-size:36px;margin-bottom:16px;filter:drop-shadow(0 0 12px rgba(203,255,192,.8));">☯</div>
-    <div style="font-family:'Klee One',cursive;font-size:28px;color:var(--zh);letter-spacing:.2em;text-shadow:0 0 14px rgba(255,255,0,.7);margin-bottom:6px;">道德經</div>
+    <div style="font-family:'Klee One',cursive;font-size:28px;color:#ffffff;letter-spacing:.2em;text-shadow:0 0 14px rgba(255,255,255,.4);margin-bottom:6px;">道德經</div>
     <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--sky);letter-spacing:0.18em;margin-bottom:4px;">Fortune Wheel</div>
     <div style="font-family:'Cinzel',serif;font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.2em;margin-bottom:48px;">Fukubiki · H1.P1.T4</div>
     <div onclick="startGoogleLogin()"
@@ -291,7 +291,7 @@ button:active,[onclick]:active{opacity:.75!important;transform:scale(0.96)!impor
 <!-- ══════════════════════════════════════
      VERIFYING SCREEN
 ══════════════════════════════════════ -->
-<div id="screen-fw-verify" class="screen">
+<div id="screen-fw-verify" class="screen" style="display:none;">
   <div style="font-size:36px;filter:drop-shadow(0 0 14px rgba(203,255,192,.8));" class="sp-loading-img">☯</div>
   <div class="sp-loading">Verifying…</div>
 </div>
@@ -300,9 +300,9 @@ button:active,[onclick]:active{opacity:.75!important;transform:scale(0.96)!impor
 <!-- ══════════════════════════════════════
      SPLASH SCREEN
 ══════════════════════════════════════ -->
-<div id="screen-fw-splash" class="screen" onclick="fwEnter()">
+<div id="screen-fw-splash" class="screen" style="display:none;" onclick="fwEnter()">
   <div style="font-size:48px;margin-bottom:20px;filter:drop-shadow(0 0 16px rgba(203,255,192,.8));animation:spin 24s linear infinite;">☯</div>
-  <div style="font-family:'Klee One',cursive;font-size:44px;color:var(--zh);letter-spacing:.2em;text-shadow:0 0 18px rgba(255,255,0,.7),0 0 40px rgba(255,255,0,.35);margin-bottom:12px;">道德經</div>
+  <div style="font-family:'Klee One',cursive;font-size:44px;color:#ffffff;letter-spacing:.2em;text-shadow:0 0 18px rgba(255,255,255,.4),0 0 40px rgba(255,255,255,.2);margin-bottom:12px;">道德經</div>
   <div style="font-family:'Cinzel',serif;font-size:15px;color:var(--sky);letter-spacing:0.2em;margin-bottom:8px;">Fortune Wheel</div>
   <div style="font-family:'Crimson Pro',serif;font-style:italic;font-size:16px;color:rgba(255,245,220,0.7);margin-bottom:60px;">Tap anywhere to enter</div>
   <div style="position:absolute;bottom:28px;text-align:center;">
@@ -315,7 +315,7 @@ button:active,[onclick]:active{opacity:.75!important;transform:scale(0.96)!impor
 <!-- ══════════════════════════════════════
      WHEEL SCREEN
 ══════════════════════════════════════ -->
-<div id="screen-fw-wheel" class="screen">
+<div id="screen-fw-wheel" class="screen" style="display:none;">
   <div class="wheel-page">
     <div class="header">
       <div class="hdr-zh">道德經</div>
@@ -370,7 +370,7 @@ button:active,[onclick]:active{opacity:.75!important;transform:scale(0.96)!impor
   </div>
 </div>
 ══════════════════════════════════════ -->
-<div id="screen-fw-chapter" class="screen">
+<div id="screen-fw-chapter" class="screen" style="display:none;">
   <div class="ch-page">
     <div class="ch-topbar">
       <button class="ch-back-btn" onclick="fwGoBack()"> Back</button>
