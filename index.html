@@ -95,7 +95,7 @@ html,body{
 .header{text-align:center;padding:36px 20px 16px;}
 .header::before{content:'☯';display:block;font-size:32px;color:var(--gold);margin-bottom:6px;animation:spin 24s linear infinite;filter:drop-shadow(0 0 8px rgba(203,255,192,.8));}
 @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-.hdr-zh{font-family:'Klee One',cursive;font-size:clamp(28px,6vw,50px);color:var(--zh);letter-spacing:.2em;text-shadow:0 0 18px rgba(255,255,0,.7),0 0 40px rgba(255,255,0,.35);}
+.hdr-zh{font-family:'Klee One',cursive;font-size:clamp(28px,6vw,50px);color:#ffffff;letter-spacing:.2em;text-shadow:0 0 18px rgba(255,255,255,.4),0 0 40px rgba(255,255,255,.2);}
 .hdr-en{font-family:'Cinzel',serif;font-style:normal;font-size:clamp(11px,2vw,15px);color:rgba(255,255,255,0.4);letter-spacing:.15em;margin-top:6px;}
 .divider{width:140px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:16px auto;}
 .wheel-section{display:flex;flex-direction:column;align-items:center;gap:20px;padding:0 20px 20px;width:100%;}
@@ -107,6 +107,13 @@ html,body{
 .ptr{width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:30px solid var(--red);filter:drop-shadow(0 3px 10px rgba(192,57,43,.8));}
 .hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:110px;height:110px;border-radius:0;background:none;border:none;z-index:20;cursor:pointer;overflow:visible;animation:hubPulse 4s ease-in-out infinite;}
 .hub img{width:100%;height:100%;object-fit:contain;display:block;background:transparent;border-radius:0;}
+.hub:active{
+  animation-play-state:paused!important;
+  transform:translate(-50%,-50%) scale(0.94)!important;
+  filter:drop-shadow(0 0 8px rgba(203,255,192,0.5))!important;
+  transition:transform .08s ease,filter .08s ease!important;
+  opacity:1!important;
+}
 @keyframes hubPulse{
   0%,100%{filter:drop-shadow(0 0 8px rgba(203,255,192,0.7)) drop-shadow(0 0 16px rgba(203,255,192,0.4));transform:translate(-50%,-50%) scale(1);}
   50%{filter:drop-shadow(0 0 18px rgba(203,255,192,1)) drop-shadow(0 0 35px rgba(203,255,192,0.75));transform:translate(-50%,-50%) scale(1.05);}
@@ -345,16 +352,23 @@ button:active,[onclick]:active{opacity:.75!important;transform:scale(0.96)!impor
       </div>
     </div>
 
+    <div style="margin-top:24px;margin-bottom:8px;text-align:center;">
+      <button onclick="window.location.href='https://spgo5.github.io/Go5.DDJ/'"
+        style="font-family:'Cinzel',serif;font-size:13px;letter-spacing:0.1em;
+               color:var(--green);background:rgba(0,0,80,0.7);
+               border:1.5px solid rgba(203,255,192,0.4);border-radius:24px;
+               padding:12px 28px;cursor:pointer;
+               transition:background .2s,border-color .2s,box-shadow .2s;">
+        Go to 道德經 Database
+      </button>
+    </div>
+
     <div class="portal-footer">
       <div class="footer-credit">Developed by <strong>Claude</strong> · Conceived &amp; directed by <strong>SPGo</strong></div>
       <div class="footer-copy">© 2026 · SPGo · All rights reserved</div>
     </div>
   </div>
 </div>
-
-
-<!-- ══════════════════════════════════════
-     CHAPTER SCREEN
 ══════════════════════════════════════ -->
 <div id="screen-fw-chapter" class="screen">
   <div class="ch-page">
