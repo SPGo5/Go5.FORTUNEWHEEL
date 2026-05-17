@@ -2,171 +2,318 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>道德經 Fortune Wheel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>🔮 道德經 Fortune Wheel · Fukubiki</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Klee+One&family=Shalimar&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Klee+One&family=Shalimar&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://spgo5.github.io/Go5.SHARED/spgo-core.css">
+
 <style>
-  :root {
-    --bg:#000073; --gold:#b8860b; --gold-l:#d4a843; --red:#c0392b;
-    --no:#ccff00; --zh:#ffff00; --hv:#E0B0FF; --en:#CBFFC0;
-    --lcol:52px;
-    /* Card is always portrait-ish — fixed 520px, never wider */
-    --card-w:520px;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  html,body{height:100%;overflow:hidden;}
-  body{
-    background:var(--bg); font-family:'Cormorant Garamond',serif;
-    background-image:
-      radial-gradient(ellipse at 30% 10%,rgba(0,0,180,.4) 0%,transparent 55%),
-      radial-gradient(ellipse at 70% 90%,rgba(0,0,120,.3) 0%,transparent 55%);
-  }
+:root {
+  --bg:#000073; --gold:#b8860b; --gold-l:#d4a843; --red:#c0392b;
+  --no:#ccff00; --zh:#ffff00; --hv:#E0B0FF; --en:#CBFFC0;
+  --lcol:52px;
+  --card-w:520px;
+  --sky:#00BFFF;
+  --navy:#000073;
+  --navy-dark:#00004a;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{
+  height:100%;
+  font-family:'Cormorant Garamond',serif;
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse at 30% 10%,rgba(0,0,180,.4) 0%,transparent 55%),
+    radial-gradient(ellipse at 70% 90%,rgba(0,0,120,.3) 0%,transparent 55%);
+  overflow-x:hidden;
+}
 
-  /* ══ SCREENS ══ */
-  .screen{position:fixed;inset:0;transition:transform .45s cubic-bezier(.77,0,.18,1),opacity .45s ease;}
-  #wheelScreen{overflow-y:auto;overflow-x:hidden;transform:translateX(0);opacity:1;z-index:10;}
-  #wheelScreen.slide-out{transform:translateX(-100%);opacity:0;pointer-events:none;}
-  #chapterScreen{
-    transform:translateX(100%);opacity:0;pointer-events:none;z-index:20;
-    overflow-y:auto;overflow-x:hidden;
-    background:var(--bg);
-    background-image:radial-gradient(ellipse at 30% 10%,rgba(0,0,180,.4) 0%,transparent 55%),radial-gradient(ellipse at 70% 90%,rgba(0,0,120,.3) 0%,transparent 55%);
-  }
-  #chapterScreen.slide-in{transform:translateX(0);opacity:1;pointer-events:all;}
+/* ══ PROFILE CORNER ══ */
+#profile-corner{
+  position:fixed;top:12px;right:14px;z-index:9999;
+  display:none;flex-direction:column;align-items:center;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#profile-corner img{
+  width:36px;height:36px;border-radius:50%;object-fit:cover;
+  border:2px solid rgba(0,191,255,0.5);
+  box-shadow:0 0 10px rgba(0,191,255,0.3);
+}
+#profile-corner-code{
+  font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.08em;
+  color:rgba(0,191,255,0.7);margin-top:3px;
+  max-width:50px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
 
-  /* ══ WHEEL SCREEN ══ */
-  .wheel-page{display:flex;flex-direction:column;align-items:center;padding-bottom:40px;min-height:100%;}
-  .header{text-align:center;padding:36px 20px 16px;}
-  .header::before{content:'☯';display:block;font-size:32px;color:var(--gold);margin-bottom:6px;animation:spin 24s linear infinite;filter:drop-shadow(0 0 8px rgba(184,134,11,.8));}
-  @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-  .hdr-zh{font-family:'Klee One',cursive;font-size:clamp(28px,6vw,50px);color:var(--zh);letter-spacing:.2em;text-shadow:0 0 18px rgba(255,255,0,.7),0 0 40px rgba(255,255,0,.35);}
-  .hdr-en{font-style:italic;font-size:clamp(13px,2.5vw,18px);color:var(--en);letter-spacing:.1em;margin-top:6px;}
-  .divider{width:140px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:16px auto;}
-  .wheel-section{display:flex;flex-direction:column;align-items:center;gap:20px;padding:0 20px 20px;width:100%;}
-  .wheel-wrapper{position:relative;width:min(500px,94vw);height:min(500px,94vw);}
-  .wheel-wrapper::before{content:'';position:absolute;inset:-9px;border-radius:50%;background:conic-gradient(var(--gold) 0deg,var(--gold-l) 45deg,var(--gold) 90deg,var(--gold-l) 135deg,var(--gold) 180deg,var(--gold-l) 225deg,var(--gold) 270deg,var(--gold-l) 315deg,var(--gold) 360deg);z-index:0;filter:drop-shadow(0 0 10px rgba(184,134,11,.6));}
-  .wheel-wrapper::after{content:'';position:absolute;inset:-4px;border-radius:50%;background:var(--bg);z-index:1;}
-  #wheelCanvas{position:relative;z-index:2;border-radius:50%;box-shadow:0 8px 40px rgba(0,0,0,.5),0 0 30px rgba(0,0,180,.4);display:block;}
-  .ptr-wrap{position:absolute;top:-16px;left:50%;transform:translateX(-50%);z-index:10;}
-  .ptr{width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:30px solid var(--red);filter:drop-shadow(0 3px 10px rgba(192,57,43,.8));}
-  .hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#3333ff,#000073);border:3px solid var(--gold);z-index:10;display:flex;align-items:center;justify-content:center;font-size:22px;pointer-events:none;}
-  .rng-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-l);text-align:center;}
-  .rng-sel{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
-  .rng-btn{font-size:13px;color:var(--gold-l);background:rgba(0,0,80,.6);border:1.5px solid rgba(184,134,11,.35);border-radius:24px;padding:9px 20px;cursor:pointer;transition:all .22s ease;user-select:none;display:flex;align-items:center;gap:5px;}
-  .rng-btn:hover{border-color:var(--gold);color:#fff;}
-  .rng-btn.active{background:rgba(0,0,60,.9);color:var(--gold-l);border-color:var(--gold);box-shadow:0 0 0 2px var(--gold),0 0 18px 5px rgba(184,134,11,.5);transform:scale(1.07) translateY(1px);font-weight:600;}
-  .rng-btn .rec{font-family:'Crimson Pro',serif;font-style:italic;font-size:11px;color:#ff6b6b;display:none;}
-  .rng-btn.show-rec .rec{display:inline;}
-  .rng-st{font-size:11px;color:var(--gold-l);font-family:monospace;min-height:15px;text-align:center;opacity:.8;}
-  .spin-btn{font-size:16px;font-weight:600;letter-spacing:.12em;color:#fff;background:linear-gradient(135deg,#8B0000,#c0392b,#8B0000);border:1px solid rgba(184,134,11,.5);border-radius:40px;padding:14px 48px;cursor:pointer;transition:all .25s ease;box-shadow:0 4px 20px rgba(192,57,43,.4);}
-  .spin-btn:hover:not(:disabled){transform:translateY(-2px);}
-  .spin-btn:disabled{opacity:.5;cursor:not-allowed;}
+/* ══ SCREEN SYSTEM ══ */
+.screen{
+  display:none;position:fixed;inset:0;
+  flex-direction:column;align-items:center;
+  overflow-y:auto;overflow-x:hidden;
+}
+.screen.active{display:flex;}
 
-  /* ANU popup */
-  .anu-pop{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,40,.88);backdrop-filter:blur(6px);align-items:center;justify-content:center;}
-  .anu-pop.visible{display:flex;}
-  .pop-box{background:linear-gradient(135deg,#00005a,#000073);border:1px solid var(--gold);border-radius:8px;padding:32px 36px;max-width:420px;width:90%;text-align:center;}
-  .pop-box h3{font-size:20px;color:var(--zh);margin-bottom:10px;}
-  .pop-box p{font-family:'Crimson Pro',serif;font-size:15px;color:var(--en);margin-bottom:24px;line-height:1.6;}
-  .pop-choices{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-  .pop-choice{font-size:14px;color:var(--gold-l);background:rgba(0,0,80,.8);border:1.5px solid var(--gold);border-radius:24px;padding:10px 22px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;}
-  .pop-choice:hover{background:rgba(0,0,120,.9);}
-  .pop-rec{font-family:'Crimson Pro',serif;font-style:italic;font-size:11px;color:#ff6b6b;}
+/* ══ LOGIN SCREEN ══ */
+#screen-fw-login{
+  background:linear-gradient(180deg,#000073 0%,#00004a 100%);
+  min-height:100dvh;justify-content:center;
+  padding:40px 24px;text-align:center;
+}
+.fw-login-card{
+  display:flex;flex-direction:column;align-items:center;gap:0;
+}
 
-  /* ══ CHAPTER SCREEN ══ */
-  .ch-page{min-height:100%;display:flex;flex-direction:column;}
-  .ch-topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(0,0,50,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(184,134,11,.25);flex-shrink:0;}
-  .back-btn{font-size:14px;color:var(--gold-l);cursor:pointer;display:flex;align-items:center;gap:6px;background:none;border:none;font-family:'Cormorant Garamond',serif;letter-spacing:.05em;}
-  .back-btn:hover{color:#fff;}
-  .back-btn::before{content:'←';font-size:18px;}
-  .dl-btn{font-family:'Crimson Pro',serif;font-size:13px;font-weight:600;color:#000;background:linear-gradient(135deg,var(--no),#aadd00);border:none;border-radius:20px;padding:7px 16px;cursor:pointer;}
-  .dl-btn:disabled{opacity:.5;cursor:not-allowed;}
-  .copy-btn{font-family:'Crimson Pro',serif;font-size:13px;font-weight:600;color:#000;background:linear-gradient(135deg,#E0B0FF,#c070ff);border:none;border-radius:20px;padding:7px 16px;cursor:pointer;transition:all .2s;box-shadow:0 2px 10px rgba(180,140,255,.3);}
-  .copy-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(180,140,255,.5);}
-  .copy-btn:disabled{opacity:.5;cursor:not-allowed;}
+/* ══ VERIFYING SCREEN ══ */
+#screen-fw-verify{
+  background:linear-gradient(180deg,#000073,#00004a);
+  min-height:100dvh;justify-content:center;align-items:center;gap:20px;
+}
 
-  /* ══ SCROLL WRAPPER — centers the card on screen ══ */
-  .ch-scroll{flex:1;padding:28px 20px 48px;display:flex;justify-content:center;align-items:flex-start;}
+/* ══ SPLASH SCREEN ══ */
+#screen-fw-splash{
+  background:linear-gradient(180deg,#000073 0%,#00004a 100%);
+  min-height:100dvh;justify-content:center;align-items:center;
+  padding:40px 24px;text-align:center;gap:0;
+}
 
-  /* ══ EXPORT CARD ══
-     Fixed portrait width. Content always fills it.
-     On narrow screens it fills viewport width.
-  ══ */
-  #exportCard{
-    width:var(--card-w);
-    max-width:96vw;
-    background:linear-gradient(160deg,#00006a 0%,#000058 60%,#00004a 100%);
-    border:2px solid rgba(184,134,11,.8);
-    border-radius:8px;
-    box-shadow:
-      0 0 0 4px rgba(0,0,50,.95),
-      0 0 0 6px rgba(184,134,11,.3),
-      0 16px 60px rgba(0,0,0,.8);
-    padding:32px 32px 24px 32px;
-    position:relative;
-  }
-  /* DOM corner ornaments so html2canvas picks them up */
-  .cc{position:absolute;font-size:15px;color:var(--gold);opacity:.55;line-height:1;pointer-events:none;}
-  .cc.tl{top:9px;left:12px;}
-  .cc.tr{top:9px;right:12px;}
-  .cc.bl{bottom:9px;left:12px;}
-  .cc.br{bottom:9px;right:12px;}
+/* ══ WHEEL SCREEN ══ */
+#screen-fw-wheel{
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse at 30% 10%,rgba(0,0,180,.4) 0%,transparent 55%),
+    radial-gradient(ellipse at 70% 90%,rgba(0,0,120,.3) 0%,transparent 55%);
+  min-height:100dvh;
+}
+.wheel-page{display:flex;flex-direction:column;align-items:center;padding-bottom:60px;min-height:100%;}
+.header{text-align:center;padding:36px 20px 16px;}
+.header::before{content:'☯';display:block;font-size:32px;color:var(--gold);margin-bottom:6px;animation:spin 24s linear infinite;filter:drop-shadow(0 0 8px rgba(184,134,11,.8));}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.hdr-zh{font-family:'Klee One',cursive;font-size:clamp(28px,6vw,50px);color:var(--zh);letter-spacing:.2em;text-shadow:0 0 18px rgba(255,255,0,.7),0 0 40px rgba(255,255,0,.35);}
+.hdr-en{font-family:'Cinzel',serif;font-style:normal;font-size:clamp(11px,2vw,15px);color:rgba(255,255,255,0.4);letter-spacing:.15em;margin-top:6px;}
+.divider{width:140px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:16px auto;}
+.wheel-section{display:flex;flex-direction:column;align-items:center;gap:20px;padding:0 20px 20px;width:100%;}
+.wheel-wrapper{position:relative;width:min(500px,94vw);height:min(500px,94vw);}
+.wheel-wrapper::before{content:'';position:absolute;inset:-9px;border-radius:50%;background:conic-gradient(var(--gold) 0deg,var(--gold-l) 45deg,var(--gold) 90deg,var(--gold-l) 135deg,var(--gold) 180deg,var(--gold-l) 225deg,var(--gold) 270deg,var(--gold-l) 315deg,var(--gold) 360deg);z-index:0;filter:drop-shadow(0 0 10px rgba(184,134,11,.6));}
+.wheel-wrapper::after{content:'';position:absolute;inset:-4px;border-radius:50%;background:var(--bg);z-index:1;}
+#wheelCanvas{position:relative;z-index:2;border-radius:50%;box-shadow:0 8px 40px rgba(0,0,0,.5),0 0 30px rgba(0,0,180,.4);display:block;}
+.ptr-wrap{position:absolute;top:-16px;left:50%;transform:translateX(-50%);z-index:10;}
+.ptr{width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:30px solid var(--red);filter:drop-shadow(0 3px 10px rgba(192,57,43,.8));}
+.hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#3333ff,#000073);border:3px solid var(--gold);z-index:10;display:flex;align-items:center;justify-content:center;font-size:22px;pointer-events:none;}
+.rng-label{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-l);text-align:center;}
+.rng-sel{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.rng-btn{font-family:'Cinzel',serif;font-size:12px;color:var(--gold-l);background:rgba(0,0,80,.6);border:1.5px solid rgba(184,134,11,.35);border-radius:24px;padding:9px 20px;cursor:pointer;transition:all .22s ease;user-select:none;display:flex;align-items:center;gap:5px;}
+.rng-btn:hover{border-color:var(--gold);color:#fff;}
+.rng-btn.active{background:rgba(0,0,60,.9);color:var(--gold-l);border-color:var(--gold);box-shadow:0 0 0 2px var(--gold),0 0 18px 5px rgba(184,134,11,.5);transform:scale(1.07) translateY(1px);font-weight:600;}
+.rng-btn .rec{font-family:'Crimson Pro',serif;font-style:italic;font-size:11px;color:#ff6b6b;display:none;}
+.rng-btn.show-rec .rec{display:inline;}
+.rng-st{font-family:'Cinzel',serif;font-size:11px;color:var(--gold-l);min-height:15px;text-align:center;opacity:.8;}
+.spin-btn{font-family:'Cinzel',serif;font-size:14px;font-weight:600;letter-spacing:.12em;color:#fff;background:linear-gradient(135deg,#8B0000,#c0392b,#8B0000);border:1px solid rgba(184,134,11,.5);border-radius:40px;padding:14px 48px;cursor:pointer;transition:all .25s ease;box-shadow:0 4px 20px rgba(192,57,43,.4);}
+.spin-btn:hover:not(:disabled){transform:translateY(-2px);}
+.spin-btn:disabled{opacity:.5;cursor:not-allowed;}
 
-  /* ══ ROW LAYOUT — number col left, text col right ══ */
-  .row{display:flex;align-items:flex-start;}
-  .col-no{
-    width:var(--lcol);flex-shrink:0;padding-top:4px;
-    font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;
-    color:var(--no);text-shadow:0 0 8px rgba(204,255,0,.6),0 0 20px rgba(204,255,0,.3);
-  }
-  .col-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:0;}
+/* ══ ANU popup ══ */
+.anu-pop{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,40,.88);backdrop-filter:blur(6px);align-items:center;justify-content:center;}
+.anu-pop.visible{display:flex;}
+.pop-box{background:linear-gradient(135deg,#00005a,#000073);border:1px solid var(--gold);border-radius:8px;padding:32px 36px;max-width:420px;width:90%;text-align:center;}
+.pop-box h3{font-family:'Cinzel',serif;font-size:18px;color:var(--zh);margin-bottom:10px;}
+.pop-box p{font-family:'Crimson Pro',serif;font-size:15px;color:var(--en);margin-bottom:24px;line-height:1.6;}
+.pop-choices{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.pop-choice{font-family:'Cinzel',serif;font-size:13px;color:var(--gold-l);background:rgba(0,0,80,.8);border:1.5px solid var(--gold);border-radius:24px;padding:10px 22px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.pop-choice:hover{background:rgba(0,0,120,.9);}
+.pop-rec{font-family:'Crimson Pro',serif;font-style:italic;font-size:11px;color:#ff6b6b;}
 
-  /* Title text */
-  .t-zh{
-    font-family:'Klee One',cursive;font-size:30px;font-weight:700;
-    color:var(--zh);letter-spacing:.1em;line-height:1.3;
-    text-shadow:0 0 6px rgba(255,255,255,1),0 0 14px rgba(255,255,255,.9),0 0 30px rgba(255,255,255,.6),0 0 55px rgba(255,255,255,.3);
-  }
-  .t-hv{font-family:'Shalimar',cursive;font-size:38px;color:var(--hv);line-height:1.1;}
-  .t-en{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;font-weight:700;color:var(--en);line-height:1.4;}
+/* ══ CHAPTER SCREEN ══ */
+#screen-fw-chapter{
+  background:var(--bg);
+  background-image:radial-gradient(ellipse at 30% 10%,rgba(0,0,180,.4) 0%,transparent 55%),radial-gradient(ellipse at 70% 90%,rgba(0,0,120,.3) 0%,transparent 55%);
+  min-height:100dvh;
+}
+.ch-page{min-height:100%;display:flex;flex-direction:column;}
+.ch-topbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;
+  background:rgba(0,0,50,.92);backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(184,134,11,.25);flex-shrink:0;
+}
+.ch-back-btn{
+  font-family:'Cinzel',serif;font-size:13px;color:var(--sky);cursor:pointer;
+  display:flex;align-items:center;gap:6px;background:none;border:none;
+  letter-spacing:.05em;
+}
+.ch-back-btn::before{content:'‹';font-size:22px;line-height:1;}
+.ch-back-btn:hover{color:#fff;}
+.ch-action-btns{display:flex;gap:8px;align-items:center;}
 
-  /* Flower — centered, 1/3 height */
-  .flower{text-align:center;padding:16px 0 12px;}
-  .flower img{
-    height:120px;width:auto;display:inline-block;
-    filter:drop-shadow(0 0 10px rgba(180,140,255,.75)) drop-shadow(0 0 24px rgba(180,140,255,.45)) drop-shadow(0 0 50px rgba(120,90,220,.28));
-  }
+/* GYO-matching result action buttons */
+.result-action-btn{
+  width:100%;padding:12px 8px;
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);
+  color:white;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.08em;
+  border-radius:10px;cursor:pointer;backdrop-filter:blur(4px);
+  transition:background .2s,transform .1s;
+}
+.result-action-btn:hover{background:rgba(255,255,255,0.17);}
+.result-action-btn:active{transform:scale(0.96);opacity:.75;}
+.result-action-btn:disabled{opacity:.5;cursor:not-allowed;}
 
-  /* Content lines */
-  .c-line{display:flex;align-items:flex-start;padding:12px 0;border-top:1px solid rgba(184,134,11,.12);}
-  .c-zh{
-    font-family:'Klee One',cursive;font-size:30px;line-height:1.45;
-    color:var(--zh);
-    text-shadow:0 0 6px rgba(255,255,255,1),0 0 14px rgba(255,255,255,.9),0 0 30px rgba(255,255,255,.6),0 0 55px rgba(255,255,255,.3);
-  }
-  .c-hv{font-family:'Shalimar',cursive;font-size:30px;line-height:1.2;color:var(--hv);}
-  .c-en{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;line-height:1.5;color:var(--en);}
+/* Topbar compact variants */
+.topbar-btn{
+  font-family:'Cinzel',serif;font-size:12px;font-weight:600;
+  border-radius:20px;padding:7px 14px;cursor:pointer;
+  border:none;transition:all .2s;
+}
+.topbar-btn-img{color:#000;background:linear-gradient(135deg,var(--no),#aadd00);}
+.topbar-btn-txt{color:#000;background:linear-gradient(135deg,#E0B0FF,#c070ff);}
+.topbar-btn:disabled{opacity:.5;cursor:not-allowed;}
 
-  /* Card footer — RNG method + datetime */
-  .card-foot{
-    margin-top:18px;padding-top:12px;
-    border-top:1px solid rgba(184,134,11,.2);
-    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;
-  }
-  .card-foot span{
-    font-family:'Crimson Pro',serif;font-style:italic;
-    font-size:11px;color:rgba(212,168,67,.5);letter-spacing:.05em;
-  }
+.ch-scroll{flex:1;padding:28px 20px 48px;display:flex;justify-content:center;align-items:flex-start;}
 
-  .swipe-hint{text-align:center;font-family:'Crimson Pro',serif;font-style:italic;font-size:12px;color:rgba(184,134,11,.3);padding:8px 0 20px;flex-shrink:0;}
+/* ══ EXPORT CARD ══ */
+#exportCard{
+  width:var(--card-w);max-width:96vw;
+  background:linear-gradient(160deg,#00006a 0%,#000058 60%,#00004a 100%);
+  border:2px solid rgba(184,134,11,.8);border-radius:8px;
+  box-shadow:0 0 0 4px rgba(0,0,50,.95),0 0 0 6px rgba(184,134,11,.3),0 16px 60px rgba(0,0,0,.8);
+  padding:32px 32px 24px 32px;position:relative;
+}
+.cc{position:absolute;font-size:15px;color:var(--gold);opacity:.55;line-height:1;pointer-events:none;}
+.cc.tl{top:9px;left:12px;}
+.cc.tr{top:9px;right:12px;}
+.cc.bl{bottom:9px;left:12px;}
+.cc.br{bottom:9px;right:12px;}
+.row{display:flex;align-items:flex-start;}
+.col-no{width:var(--lcol);flex-shrink:0;padding-top:4px;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--no);text-shadow:0 0 8px rgba(204,255,0,.6),0 0 20px rgba(204,255,0,.3);}
+.col-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:0;}
+.t-zh{font-family:'Klee One',cursive;font-size:30px;font-weight:700;color:var(--zh);letter-spacing:.1em;line-height:1.3;text-shadow:0 0 6px rgba(255,255,255,1),0 0 14px rgba(255,255,255,.9),0 0 30px rgba(255,255,255,.6),0 0 55px rgba(255,255,255,.3);}
+.t-hv{font-family:'Shalimar',cursive;font-size:38px;color:var(--hv);line-height:1.1;}
+.t-en{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;font-weight:700;color:var(--en);line-height:1.4;}
+.flower{text-align:center;padding:16px 0 12px;}
+.flower img{height:120px;width:auto;display:inline-block;filter:drop-shadow(0 0 10px rgba(180,140,255,.75)) drop-shadow(0 0 24px rgba(180,140,255,.45)) drop-shadow(0 0 50px rgba(120,90,220,.28));}
+.c-line{display:flex;align-items:flex-start;padding:12px 0;border-top:1px solid rgba(184,134,11,.12);}
+.c-zh{font-family:'Klee One',cursive;font-size:30px;line-height:1.45;color:var(--zh);text-shadow:0 0 6px rgba(255,255,255,1),0 0 14px rgba(255,255,255,.9),0 0 30px rgba(255,255,255,.6),0 0 55px rgba(255,255,255,.3);}
+.c-hv{font-family:'Shalimar',cursive;font-size:30px;line-height:1.2;color:var(--hv);}
+.c-en{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;line-height:1.5;color:var(--en);}
+.card-foot{margin-top:18px;padding-top:12px;border-top:1px solid rgba(184,134,11,.2);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;}
+.card-foot span{font-family:'Crimson Pro',serif;font-style:italic;font-size:11px;color:rgba(212,168,67,.5);letter-spacing:.05em;}
+
+/* Copy/image confirm feedback */
+.action-confirm{font-size:11px;color:rgba(255,255,255,0.6);font-style:italic;opacity:0;transition:opacity 0.3s;height:16px;text-align:center;}
+
+/* portal footer */
+.portal-footer{margin-top:60px;width:100%;max-width:420px;padding:16px 0;border-top:1px solid rgba(255,255,255,0.06);text-align:center;}
+.footer-credit{font-size:11px;color:rgba(255,255,255,.25);font-style:italic;line-height:1.8;}
+.footer-credit strong{color:rgba(0,191,255,.5);font-style:normal;font-weight:400;}
+.footer-copy{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.2);margin-top:4px;}
+
+/* spgo-core loading animation helpers */
+@keyframes verifyPulse{
+  0%,100%{opacity:.7;transform:scale(1);filter:drop-shadow(0 0 14px rgba(0,191,255,.5));}
+  50%{opacity:1;transform:scale(1.08);filter:drop-shadow(0 0 28px rgba(0,191,255,.9));}
+}
+.sp-loading-img{animation:verifyPulse 1.6s ease-in-out infinite;}
+.sp-loading{font-family:'Cinzel',serif;font-style:italic;font-size:15px;color:#ccff00;animation:haircutPulse 1.2s ease-in-out infinite;text-align:center;}
+@keyframes haircutPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+button:active,[onclick]:active{opacity:.75!important;transform:scale(0.96)!important;transition:opacity .08s,transform .08s!important;}
 </style>
 </head>
 <body>
 
-<!-- ══ WHEEL SCREEN ══ -->
-<div class="screen" id="wheelScreen">
+<!-- ══ PROFILE CORNER ══ -->
+<div id="profile-corner" onclick="toggleLogoutPopup()">
+  <img id="profile-corner-img" src="" alt="">
+  <div id="profile-corner-code"></div>
+</div>
+
+<!-- ══ LOGOUT POPUP ══ -->
+<div id="logout-popup" style="display:none;position:fixed;top:60px;right:10px;z-index:9999;background:rgba(0,0,60,0.97);border:1px solid rgba(0,191,255,0.35);border-radius:12px;padding:14px 18px;flex-direction:column;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,0.5);min-width:160px;">
+  <button onclick="showProfilePicUploader()" style="background:none;border:1px solid rgba(0,191,255,0.4);color:rgba(0,191,255,0.85);font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.08em;padding:10px 14px;border-radius:8px;cursor:pointer;text-align:left;">👤 Change profile pic</button>
+  <button onclick="useDefaultProfilePic()" style="background:none;border:1px solid rgba(0,191,255,0.3);color:rgba(0,191,255,0.65);font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.08em;padding:10px 14px;border-radius:8px;cursor:pointer;text-align:left;">👤 Use default profile pic</button>
+  <button onclick="doLogout()" style="background:none;border:1px solid rgba(255,80,80,0.5);color:rgba(255,150,150,0.9);font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.1em;padding:10px 14px;border-radius:8px;cursor:pointer;">⟵ Log out</button>
+</div>
+
+<!-- ══ PROFILE PIC UPLOADER MODAL ══ -->
+<div id="profile-pic-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,40,0.92);flex-direction:column;align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#000073;border:1px solid rgba(0,191,255,0.3);border-radius:16px;padding:24px;width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center;gap:16px;">
+    <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--sky);letter-spacing:0.12em;">Change Profile Pic</div>
+    <div style="font-family:'Crimson Pro',serif;font-size:12px;font-style:italic;color:rgba(255,100,100,0.8);text-align:center;">Replacing this photo permanently deletes it. There's no profile album like Facebook.</div>
+    <div id="ppu-step1" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <label style="width:100%;padding:14px;background:rgba(0,191,255,0.1);border:1px dashed rgba(0,191,255,0.4);border-radius:10px;text-align:center;cursor:pointer;font-family:'Crimson Pro',serif;font-size:14px;color:#00BFFF;">
+        📁 Pick a photo
+        <input type="file" accept="image/*" id="ppu-file-input" style="display:none;" onchange="ppuFileChosen(this)">
+      </label>
+    </div>
+    <div id="ppu-step2" style="display:none;width:100%;flex-direction:column;align-items:center;gap:12px;">
+      <div style="font-family:'Crimson Pro',serif;font-size:12px;color:rgba(255,255,255,0.6);text-align:center;">Drag to reposition · Pinch or scroll to zoom</div>
+      <div style="font-family:'Crimson Pro',serif;font-size:11px;color:rgba(204,255,0,0.6);text-align:center;font-style:italic;margin-top:-6px;">Tap the circle to pick a different photo</div>
+      <div id="ppu-crop-wrap" style="position:relative;width:260px;height:260px;border-radius:50%;overflow:hidden;border:3px solid rgba(204,255,0,0.8);cursor:grab;touch-action:none;flex-shrink:0;" ondblclick="document.getElementById('ppu-file-input').click()">
+        <img id="ppu-img" style="position:absolute;transform-origin:top left;" draggable="false">
+      </div>
+      <div style="display:flex;gap:10px;width:100%;">
+        <button onclick="ppuZoom(-0.1)" style="flex:1;padding:10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:8px;font-size:18px;cursor:pointer;">−</button>
+        <button onclick="ppuZoom(0.1)" style="flex:1;padding:10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:8px;font-size:18px;cursor:pointer;">+</button>
+      </div>
+      <button id="ppu-fit-btn" onclick="ppuFitObject()" style="width:100%;padding:10px;background:rgba(204,255,0,0.12);border:1px solid rgba(204,255,0,0.5);color:#ccff00;border-radius:8px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.1em;cursor:pointer;">⊡ Fit object inside circle</button>
+      <button onclick="ppuUpload()" id="ppu-upload-btn" style="width:100%;padding:14px;background:#00BFFF;color:#000073;font-family:'Cinzel',serif;font-size:13px;font-weight:700;border:none;border-radius:10px;cursor:pointer;letter-spacing:0.1em;">Save &amp; Upload</button>
+      <div id="ppu-status" style="font-family:'Crimson Pro',serif;font-size:13px;color:rgba(255,255,255,0.7);font-style:italic;text-align:center;min-height:20px;"></div>
+    </div>
+    <button onclick="closePpuModal()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-family:'Cinzel',serif;font-size:11px;cursor:pointer;letter-spacing:0.1em;">✕ Cancel</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════ -->
+<div id="screen-fw-login" class="screen active">
+  <div class="fw-login-card">
+    <div style="font-size:36px;margin-bottom:16px;filter:drop-shadow(0 0 12px rgba(184,134,11,.8));">☯</div>
+    <div style="font-family:'Klee One',cursive;font-size:28px;color:var(--zh);letter-spacing:.2em;text-shadow:0 0 14px rgba(255,255,0,.7);margin-bottom:6px;">道德經</div>
+    <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--sky);letter-spacing:0.18em;margin-bottom:4px;">Fortune Wheel</div>
+    <div style="font-family:'Cinzel',serif;font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.2em;margin-bottom:48px;">Fukubiki · H1.P1.T4</div>
+    <div onclick="startGoogleLogin()"
+      style="display:flex;align-items:center;justify-content:center;gap:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(0,191,255,0.3);border-radius:16px;padding:14px 28px;cursor:pointer;max-width:320px;width:100%;transition:background .2s;">
+      <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      <span style="font-family:'Cinzel',serif;font-size:14px;color:white;letter-spacing:0.05em;">Sign in with Google</span>
+    </div>
+    <div id="login-error-fw" style="color:#ff8a80;font-family:'Crimson Pro',serif;font-size:13px;margin-top:16px;display:none;max-width:320px;text-align:center;"></div>
+    <div style="font-family:'Cinzel',serif;font-size:10px;font-style:italic;color:rgba(255,255,255,0.2);margin-top:56px;letter-spacing:0.1em;">Fortune Wheel · Fukubiki · SPGo</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     VERIFYING SCREEN
+══════════════════════════════════════ -->
+<div id="screen-fw-verify" class="screen">
+  <div style="font-size:36px;filter:drop-shadow(0 0 14px rgba(184,134,11,.8));" class="sp-loading-img">☯</div>
+  <div class="sp-loading">Verifying…</div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     SPLASH SCREEN
+══════════════════════════════════════ -->
+<div id="screen-fw-splash" class="screen" onclick="fwEnter()">
+  <div style="font-size:48px;margin-bottom:20px;filter:drop-shadow(0 0 16px rgba(184,134,11,.8));animation:spin 24s linear infinite;">☯</div>
+  <div style="font-family:'Klee One',cursive;font-size:44px;color:var(--zh);letter-spacing:.2em;text-shadow:0 0 18px rgba(255,255,0,.7),0 0 40px rgba(255,255,0,.35);margin-bottom:12px;">道德經</div>
+  <div style="font-family:'Cinzel',serif;font-size:15px;color:var(--sky);letter-spacing:0.2em;margin-bottom:8px;">Fortune Wheel</div>
+  <div style="font-family:'Crimson Pro',serif;font-style:italic;font-size:16px;color:rgba(255,245,220,0.7);margin-bottom:60px;">Tap anywhere to enter</div>
+  <div style="position:absolute;bottom:28px;text-align:center;">
+    <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.15em;color:rgba(255,255,255,0.35);">VISITS</div>
+    <div id="fw-visit-count" style="font-family:'Cormorant Garamond',serif;font-size:22px;color:rgba(255,255,255,0.6);">—</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     WHEEL SCREEN
+══════════════════════════════════════ -->
+<div id="screen-fw-wheel" class="screen">
   <div class="wheel-page">
     <div class="header">
       <div class="hdr-zh">道德經</div>
@@ -188,22 +335,29 @@
       <div class="rng-st" id="rngSt">⚛ Quantum (ANU) selected</div>
       <button class="spin-btn" id="spinBtn" onclick="spinWheel()">Get your wisdom of the day</button>
     </div>
+
+    <div class="portal-footer">
+      <div class="footer-credit">Developed by <strong>Claude</strong> · Conceived &amp; directed by <strong>SPGo</strong></div>
+      <div class="footer-copy">© 2026 · SPGo · All rights reserved</div>
+    </div>
   </div>
 </div>
 
-<!-- ══ CHAPTER SCREEN ══ -->
-<div class="screen" id="chapterScreen">
+
+<!-- ══════════════════════════════════════
+     CHAPTER SCREEN
+══════════════════════════════════════ -->
+<div id="screen-fw-chapter" class="screen">
   <div class="ch-page">
     <div class="ch-topbar">
-      <button class="back-btn" onclick="goBack()"> Back to Fortune Wheel</button>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <button class="copy-btn" id="copyBtn" onclick="copyText()">Copy text 📋</button>
-        <button class="dl-btn" id="dlBtn" onclick="downloadCard()">Save as image 📷</button>
+      <button class="ch-back-btn" onclick="fwGoBack()"> Back</button>
+      <div class="ch-action-btns">
+        <button class="topbar-btn topbar-btn-img" id="dlBtn" onclick="downloadCard()">Save as image 📷</button>
+        <button class="topbar-btn topbar-btn-txt" id="copyTextBtn" onclick="copyText()">Copy text 📄</button>
       </div>
     </div>
     <div class="ch-scroll">
       <div id="exportCard">
-        <!-- DOM corner ornaments — visible to html2canvas -->
         <span class="cc tl">✦</span>
         <span class="cc tr">✦</span>
 
@@ -228,11 +382,32 @@
         <span class="cc br">✦</span>
       </div>
     </div>
-    <div class="swipe-hint">← swipe right to return to wheel</div>
+
+    <!-- GYO-style Copy Result buttons below card -->
+    <div style="display:flex;gap:10px;width:100%;max-width:520px;padding:0 20px 12px;">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <button class="result-action-btn" id="copyImgBtn" onclick="downloadCard()">Copy Result 📷</button>
+        <span id="fw-img-confirm" class="action-confirm">Downloaded!</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <button class="result-action-btn" id="copyTxtBtn2" onclick="copyText()">Copy Result 📄</button>
+        <span id="fw-txt-confirm" class="action-confirm">Copied!</span>
+      </div>
+    </div>
+    <div style="width:100%;max-width:520px;padding:0 20px 6px;text-align:center;">
+      <button onclick="fwGoBack()" style="width:100%;padding:13px;background:rgba(255,245,220,0.08);border:1px solid rgba(255,245,220,0.2);color:rgba(255,245,220,0.7);font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.12em;border-radius:10px;cursor:pointer;margin-bottom:4px;">Spin Again</button>
+    </div>
+    <div style="font-size:11px;color:rgba(255,245,220,0.3);text-align:center;font-family:'Cinzel',serif;letter-spacing:0.1em;padding-bottom:8px;">You're using Super Portal 五 Go</div>
+
+    <div class="portal-footer">
+      <div class="footer-credit">Developed by <strong>Claude</strong> · Conceived &amp; directed by <strong>SPGo</strong></div>
+      <div class="footer-copy">© 2026 · SPGo · All rights reserved</div>
+    </div>
   </div>
 </div>
 
-<!-- ANU popup -->
+
+<!-- ══ ANU popup ══ -->
 <div class="anu-pop" id="anuPop">
   <div class="pop-box">
     <h3>⚛ ANU Quantum RNG unavailable</h3>
@@ -244,133 +419,272 @@
   </div>
 </div>
 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://spgo5.github.io/Go5.SHARED/spgo-core.js"></script>
 <script>
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyF1TjNDmeBqi-vlHx5GSzxQ_Zb54PLyMqcUoACNqjjc2GXBxaqcDmsH97SlAmSOGkd/exec';
+// ================================================================
+// 🔮 Fortune Wheel — Fukubiki · H1.P1.T4
+// ================================================================
+// NOTE: GAS_URL, GOOGLE_CLIENT_ID, currentUser, currentUserName,
+// currentTier, isGuest, etc. are all declared in spgo-core.js.
+// Do NOT redeclare them here.
 
-// ── Screens ───────────────────────────────────────────────────────────────────
-function showChapterScreen(){
-  document.getElementById('wheelScreen').classList.add('slide-out');
-  document.getElementById('chapterScreen').classList.add('slide-in');
-  document.getElementById('chapterScreen').scrollTop=0;
-}
-function goBack(){
-  document.getElementById('chapterScreen').classList.remove('slide-in');
-  document.getElementById('wheelScreen').classList.remove('slide-out');
+// FW's own GAS endpoint (chapter data) — kept separate from main GAS_URL
+const FW_GAS_URL = 'https://script.google.com/macros/s/AKfycbyF1TjNDmeBqi-vlHx5GSzxQ_Zb54PLyMqcUoACNqjjc2GXBxaqcDmsH97SlAmSOGkd/exec';
+
+// FW state
+let spinning = false, curRot = 0, lastData = null, lastNum = null, lastSrc = '';
+
+// ── Screen navigation ──────────────────────────────────────────────
+function goTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  const el = document.getElementById(screenId);
+  if (el) { el.style.display = 'flex'; el.classList.add('active'); window.scrollTo(0, 0); }
 }
 
-// Swipe
-let tx=0,ty=0;
-document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
-document.addEventListener('touchend',e=>{
-  const dx=e.changedTouches[0].clientX-tx,dy=Math.abs(e.changedTouches[0].clientY-ty);
-  if(Math.abs(dx)<50||dy>80)return;
-  const on=document.getElementById('chapterScreen').classList.contains('slide-in');
-  if(dx>0&&on)goBack();
-  if(dx<0&&!on&&lastData)showChapterScreen();
-},{passive:true});
+function fwEnter() { goTo('screen-fw-wheel'); resizeCv(); drawWheel(curRot); }
 
-// ── RNG ───────────────────────────────────────────────────────────────────────
-let selRNG='anu',anuRes=null;
-function selectRNG(m){
-  selRNG=m;
-  document.querySelectorAll('.rng-btn').forEach(b=>b.classList.remove('active','show-rec'));
-  document.getElementById('rng-'+m).classList.add('active');
-  document.getElementById('rngSt').textContent={anu:'⚛ Quantum (ANU) selected',atm:'🌩 Atmospheric selected',crypto:'🔒 Browser Crypto selected'}[m];
+function showChapterScreen() {
+  goTo('screen-fw-chapter');
 }
-function resolveANU(c){
+
+function fwGoBack() {
+  goTo('screen-fw-wheel');
+  resizeCv(); drawWheel(curRot);
+}
+
+// Swipe right on chapter screen → back
+let _tx = 0, _ty = 0;
+document.addEventListener('touchstart', e => { _tx = e.touches[0].clientX; _ty = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - _tx, dy = Math.abs(e.changedTouches[0].clientY - _ty);
+  if (Math.abs(dx) < 50 || dy > 80) return;
+  const onChapter = document.getElementById('screen-fw-chapter').classList.contains('active');
+  if (dx > 0 && onChapter) fwGoBack();
+}, { passive: true });
+
+// ── SPGo overrides ─────────────────────────────────────────────────
+function setHomeState() {
+  goTo('screen-fw-splash');
+  updateProfileCorner();
+  // load visit count
+  gasJsonp('action=ping&stat=visits_fw', function(data) {
+    const el = document.getElementById('fw-visit-count');
+    if (el && data.count !== undefined) el.textContent = data.count.toLocaleString();
+  }, function() {});
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('login-error-fw');
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+  goTo('screen-fw-login');
+}
+
+function showVerifying() {
+  goTo('screen-fw-verify');
+}
+
+function startGoogleLogin() {
+  const el = document.getElementById('login-error-fw');
+  if (el) el.style.display = 'none';
+  const redirectUri = window.location.origin + '/Go5.FORTUNEWHEEL/';
+  const params = new URLSearchParams({
+    client_id: GOOGLE_CLIENT_ID,
+    redirect_uri: redirectUri,
+    response_type: 'token',
+    scope: 'email profile',
+    prompt: 'select_account'
+  });
+  window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
+}
+
+// ── Logout helpers ─────────────────────────────────────────────────
+function toggleLogoutPopup() {
+  const popup = document.getElementById('logout-popup');
+  if (!popup) return;
+  popup.style.display = popup.style.display === 'flex' ? 'none' : 'flex';
+}
+
+function doLogout() {
+  try { localStorage.removeItem('go_saved_user'); } catch(e) {}
+  const popup = document.getElementById('logout-popup');
+  if (popup) popup.style.display = 'none';
+  currentUser = null; currentUserName = 'Guest';
+  currentFsSubscriber = false; currentHasPortal = false;
+  currentHasBara = false; currentTier = 0; isGuest = false;
+  updateProfileCorner();
+  goTo('screen-fw-login');
+}
+
+document.addEventListener('click', function(e) {
+  const popup = document.getElementById('logout-popup');
+  const corner = document.getElementById('profile-corner');
+  if (popup && popup.style.display === 'flex' && corner && !popup.contains(e.target) && !corner.contains(e.target)) {
+    popup.style.display = 'none';
+  }
+});
+
+// ── RNG ────────────────────────────────────────────────────────────
+let selRNG = 'anu', anuRes = null;
+
+function selectRNG(m) {
+  selRNG = m;
+  document.querySelectorAll('.rng-btn').forEach(b => b.classList.remove('active', 'show-rec'));
+  document.getElementById('rng-' + m).classList.add('active');
+  document.getElementById('rngSt').textContent = {
+    anu: '⚛ Quantum (ANU) selected',
+    atm: '🌩 Atmospheric selected',
+    crypto: '🔒 Browser Crypto selected'
+  }[m];
+}
+
+function resolveANU(c) {
   document.getElementById('anuPop').classList.remove('visible');
-  if(c==='atm')document.getElementById('rng-atm').classList.add('show-rec');
-  selectRNG(c);if(anuRes){anuRes(c);anuRes=null;}
-}
-function showANUPop(){return new Promise(r=>{anuRes=r;document.getElementById('anuPop').classList.add('visible');});}
-
-async function r81ANU(){const r=await fetch('https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8',{signal:AbortSignal.timeout(5000)});const d=await r.json();if(!d.success)throw 0;return(d.data[0]%81)+1;}
-async function r81ATM(){const r=await fetch('https://www.random.org/integers/?num=1&min=1&max=81&col=1&base=10&format=plain&rnd=new',{signal:AbortSignal.timeout(6000)});if(!r.ok)throw 0;const n=parseInt((await r.text()).trim());if(isNaN(n))throw 0;return n;}
-function r81Crypto(){const a=new Uint32Array(1);crypto.getRandomValues(a);return(a[0]%81)+1;}
-
-async function getRand(){
-  const st=document.getElementById('rngSt');
-  if(selRNG==='anu'){
-    try{st.textContent='⚛ Querying ANU…';const n=await r81ANU();st.textContent='⚛ ANU Quantum RNG';return{n,src:'⚛ ANU Quantum RNG (Australian National University)'};}
-    catch{st.textContent='⚛ ANU unavailable…';const c=await showANUPop();
-      if(c==='atm'){try{const n=await r81ATM();return{n,src:'🌩 Atmospheric RNG via Random.org'};}catch{}}
-      return{n:r81Crypto(),src:'🔒 Browser Web Crypto API'};}
-  }else if(selRNG==='atm'){
-    try{st.textContent='🌩 Sampling noise…';const n=await r81ATM();st.textContent='🌩 Atmospheric RNG';return{n,src:'🌩 Atmospheric RNG via Random.org'};}
-    catch{return{n:r81Crypto(),src:'🔒 Browser Crypto (ATM fallback)'};}
-  }else{st.textContent='🔒 Generating entropy…';const n=r81Crypto();st.textContent='🔒 Browser Crypto';return{n,src:'🔒 Browser Web Crypto API'};}
+  if (c === 'atm') document.getElementById('rng-atm').classList.add('show-rec');
+  selectRNG(c);
+  if (anuRes) { anuRes(c); anuRes = null; }
 }
 
-// ── Wheel canvas ──────────────────────────────────────────────────────────────
-const cv=document.getElementById('wheelCanvas'),ctx=cv.getContext('2d');
-const NUM=81,ARC=(2*Math.PI)/NUM;
-function resizeCv(){const s=Math.min(500,window.innerWidth*.94);cv.width=s;cv.height=s;}
-function drawWheel(rot){
-  const w=cv.width,cx=w/2,R=w/2-4;
-  ctx.clearRect(0,0,w,w);
-  ctx.save();ctx.translate(cx,cx);ctx.rotate(rot);
-  ctx.beginPath();ctx.arc(0,0,R,-Math.PI/2,Math.PI/2);ctx.fillStyle='#1a1a8c';ctx.fill();
-  ctx.beginPath();ctx.arc(0,0,R,Math.PI/2,-Math.PI/2);ctx.fillStyle='#00003a';ctx.fill();
-  const sm=R/2;
-  ctx.beginPath();ctx.arc(0,-sm,sm,0,Math.PI*2);ctx.fillStyle='#1a1a8c';ctx.fill();
-  ctx.beginPath();ctx.arc(0,sm,sm,0,Math.PI*2);ctx.fillStyle='#00003a';ctx.fill();
-  ctx.beginPath();ctx.arc(0,-sm,R/12,0,Math.PI*2);ctx.fillStyle='#00003a';ctx.fill();
-  ctx.beginPath();ctx.arc(0,sm,R/12,0,Math.PI*2);ctx.fillStyle='#d4a843';ctx.fill();
-  ctx.beginPath();ctx.arc(0,0,R,0,Math.PI*2);ctx.strokeStyle='#b8860b';ctx.lineWidth=3;ctx.stroke();
+function showANUPop() { return new Promise(r => { anuRes = r; document.getElementById('anuPop').classList.add('visible'); }); }
+
+async function r81ANU() {
+  const r = await fetch('https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8', { signal: AbortSignal.timeout(5000) });
+  const d = await r.json();
+  if (!d.success) throw 0;
+  return (d.data[0] % 81) + 1;
+}
+async function r81ATM() {
+  const r = await fetch('https://www.random.org/integers/?num=1&min=1&max=81&col=1&base=10&format=plain&rnd=new', { signal: AbortSignal.timeout(6000) });
+  if (!r.ok) throw 0;
+  const n = parseInt((await r.text()).trim());
+  if (isNaN(n)) throw 0;
+  return n;
+}
+function r81Crypto() {
+  const a = new Uint32Array(1);
+  crypto.getRandomValues(a);
+  return (a[0] % 81) + 1;
+}
+
+async function getRand() {
+  const st = document.getElementById('rngSt');
+  if (selRNG === 'anu') {
+    try {
+      st.textContent = '⚛ Querying ANU…';
+      const n = await r81ANU();
+      st.textContent = '⚛ ANU Quantum RNG';
+      return { n, src: '⚛ ANU Quantum RNG (Australian National University)' };
+    } catch {
+      st.textContent = '⚛ ANU unavailable…';
+      const c = await showANUPop();
+      if (c === 'atm') { try { const n = await r81ATM(); return { n, src: '🌩 Atmospheric RNG via Random.org' }; } catch {} }
+      return { n: r81Crypto(), src: '🔒 Browser Web Crypto API' };
+    }
+  } else if (selRNG === 'atm') {
+    try {
+      st.textContent = '🌩 Sampling noise…';
+      const n = await r81ATM();
+      st.textContent = '🌩 Atmospheric RNG';
+      return { n, src: '🌩 Atmospheric RNG via Random.org' };
+    } catch {
+      return { n: r81Crypto(), src: '🔒 Browser Crypto (ATM fallback)' };
+    }
+  } else {
+    st.textContent = '🔒 Generating entropy…';
+    const n = r81Crypto();
+    st.textContent = '🔒 Browser Crypto';
+    return { n, src: '🔒 Browser Web Crypto API' };
+  }
+}
+
+// ── Wheel canvas ───────────────────────────────────────────────────
+const cv = document.getElementById('wheelCanvas'), ctx = cv.getContext('2d');
+const NUM = 81, ARC = (2 * Math.PI) / NUM;
+
+function resizeCv() { const s = Math.min(500, window.innerWidth * .94); cv.width = s; cv.height = s; }
+
+function drawWheel(rot) {
+  const w = cv.width, cx = w / 2, R = w / 2 - 4;
+  ctx.clearRect(0, 0, w, w);
+  ctx.save(); ctx.translate(cx, cx); ctx.rotate(rot);
+  ctx.beginPath(); ctx.arc(0, 0, R, -Math.PI / 2, Math.PI / 2); ctx.fillStyle = '#1a1a8c'; ctx.fill();
+  ctx.beginPath(); ctx.arc(0, 0, R, Math.PI / 2, -Math.PI / 2); ctx.fillStyle = '#00003a'; ctx.fill();
+  const sm = R / 2;
+  ctx.beginPath(); ctx.arc(0, -sm, sm, 0, Math.PI * 2); ctx.fillStyle = '#1a1a8c'; ctx.fill();
+  ctx.beginPath(); ctx.arc(0, sm, sm, 0, Math.PI * 2); ctx.fillStyle = '#00003a'; ctx.fill();
+  ctx.beginPath(); ctx.arc(0, -sm, R / 12, 0, Math.PI * 2); ctx.fillStyle = '#00003a'; ctx.fill();
+  ctx.beginPath(); ctx.arc(0, sm, R / 12, 0, Math.PI * 2); ctx.fillStyle = '#d4a843'; ctx.fill();
+  ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.strokeStyle = '#b8860b'; ctx.lineWidth = 3; ctx.stroke();
   ctx.restore();
-  for(let i=0;i<NUM;i++){
-    const a=rot+i*ARC-Math.PI/2;
-    ctx.beginPath();ctx.moveTo(cx+R*.48*Math.cos(a),cx+R*.48*Math.sin(a));
-    ctx.lineTo(cx+R*.95*Math.cos(a),cx+R*.95*Math.sin(a));
-    ctx.strokeStyle='rgba(184,134,11,.35)';ctx.lineWidth=.8;ctx.stroke();
+  for (let i = 0; i < NUM; i++) {
+    const a = rot + i * ARC - Math.PI / 2;
+    ctx.beginPath();
+    ctx.moveTo(cx + R * .48 * Math.cos(a), cx + R * .48 * Math.sin(a));
+    ctx.lineTo(cx + R * .95 * Math.cos(a), cx + R * .95 * Math.sin(a));
+    ctx.strokeStyle = 'rgba(184,134,11,.35)'; ctx.lineWidth = .8; ctx.stroke();
   }
-  const lr=R*.855,fs=Math.max(7,R*.046);
-  ctx.font=`bold ${fs}px "Cormorant Garamond",serif`;ctx.textAlign='center';ctx.textBaseline='middle';
-  for(let i=0;i<NUM;i++){
-    const mid=rot+i*ARC-Math.PI/2+ARC/2;
-    ctx.save();ctx.translate(cx+lr*Math.cos(mid),cx+lr*Math.sin(mid));ctx.rotate(mid+Math.PI/2);
-    const rel=((mid-rot)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
-    ctx.fillStyle=(rel<=Math.PI/2||rel>=3*Math.PI/2)?'#ccff00':'#d4a843';
-    ctx.fillText(i+1,0,0);ctx.restore();
+  const lr = R * .855, fs = Math.max(7, R * .046);
+  ctx.font = `bold ${fs}px "Cormorant Garamond",serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  for (let i = 0; i < NUM; i++) {
+    const mid = rot + i * ARC - Math.PI / 2 + ARC / 2;
+    ctx.save();
+    ctx.translate(cx + lr * Math.cos(mid), cx + lr * Math.sin(mid));
+    ctx.rotate(mid + Math.PI / 2);
+    const rel = ((mid - rot) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+    ctx.fillStyle = (rel <= Math.PI / 2 || rel >= 3 * Math.PI / 2) ? '#ccff00' : '#d4a843';
+    ctx.fillText(i + 1, 0, 0);
+    ctx.restore();
   }
 }
 
-// ── Spin ──────────────────────────────────────────────────────────────────────
-let spinning=false,curRot=0,lastData=null,lastNum=null,lastSrc='';
-async function spinWheel(){
-  if(spinning)return;
-  spinning=true;document.getElementById('spinBtn').disabled=true;
-  const{n:ch,src}=await getRand();
-  lastNum=ch;lastSrc=src;
-  const delta=-Math.PI/2-((ch-1)*ARC+ARC/2)+(6+Math.floor(Math.random()*4))*2*Math.PI;
-  const dur=5000,st=performance.now(),sr=curRot;
-  function ease(t){return 1-Math.pow(1-t,3);}
-  await new Promise(res=>{
-    function frame(now){
-      const t=Math.min((now-st)/dur,1);drawWheel(sr+delta*ease(t));
-      if(t<1)requestAnimationFrame(frame);else{curRot=sr+delta;drawWheel(curRot);res();}
+// ── Spin ───────────────────────────────────────────────────────────
+async function spinWheel() {
+  if (spinning) return;
+  spinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  const { n: ch, src } = await getRand();
+  lastNum = ch; lastSrc = src;
+  const delta = -Math.PI / 2 - ((ch - 1) * ARC + ARC / 2) + (6 + Math.floor(Math.random() * 4)) * 2 * Math.PI;
+  const dur = 5000, st = performance.now(), sr = curRot;
+  function ease(t) { return 1 - Math.pow(1 - t, 3); }
+  await new Promise(res => {
+    function frame(now) {
+      const t = Math.min((now - st) / dur, 1);
+      drawWheel(sr + delta * ease(t));
+      if (t < 1) requestAnimationFrame(frame);
+      else { curRot = sr + delta; drawWheel(curRot); res(); }
     }
     requestAnimationFrame(frame);
   });
-  document.getElementById('rngSt').textContent=`✦ Chapter ${ch} — consulting the Tao…`;
-  try{
-    const data=await fetchCh(ch);lastData=data;
-    render(data,src);showChapterScreen();
-  }catch(e){document.getElementById('rngSt').textContent=`⚠ ${e.message}`;}
-  spinning=false;document.getElementById('spinBtn').disabled=false;
+  document.getElementById('rngSt').textContent = `✦ Chapter ${ch} — consulting the Tao…`;
+  try {
+    const data = await fetchCh(ch);
+    lastData = data;
+    render(data, src);
+    showChapterScreen();
+  } catch(e) {
+    document.getElementById('rngSt').textContent = `⚠ ${e.message}`;
+  }
+  spinning = false;
+  document.getElementById('spinBtn').disabled = false;
 }
 
-async function fetchCh(n){
-  const r=await fetch(`${APPS_SCRIPT_URL}?chapter=${n}`,{signal:AbortSignal.timeout(12000)});
-  if(!r.ok)throw new Error('fetch failed');
-  const d=await r.json();if(!d.success)throw new Error(d.error||'unknown');return d;
+async function fetchCh(n) {
+  const r = await fetch(`${FW_GAS_URL}?chapter=${n}`, { signal: AbortSignal.timeout(12000) });
+  if (!r.ok) throw new Error('fetch failed');
+  const d = await r.json();
+  if (!d.success) throw new Error(d.error || 'unknown');
+  return d;
 }
 
-// ── Render ────────────────────────────────────────────────────────────────────
-function render(data,src){
-  // Title — number | zh / hv / en stacked
-  document.getElementById('titleRow').innerHTML=`
+// ── Render chapter card ────────────────────────────────────────────
+function render(data, src) {
+  document.getElementById('titleRow').innerHTML = `
     <span class="col-no">${data.chapter}</span>
     <div class="col-text">
       <div class="t-zh">${data.title.zh}</div>
@@ -378,13 +692,12 @@ function render(data,src){
       <div class="t-en">${data.title.en}</div>
     </div>
   `;
-  // Content lines
-  const wrap=document.getElementById('contentLines');
-  wrap.innerHTML='';
-  data.lines.forEach(l=>{
-    const d=document.createElement('div');
-    d.className='c-line';
-    d.innerHTML=`
+  const wrap = document.getElementById('contentLines');
+  wrap.innerHTML = '';
+  data.lines.forEach(l => {
+    const d = document.createElement('div');
+    d.className = 'c-line';
+    d.innerHTML = `
       <span class="col-no">${l.no}</span>
       <div class="col-text">
         <div class="c-zh">${l.zh}</div>
@@ -394,89 +707,111 @@ function render(data,src){
     `;
     wrap.appendChild(d);
   });
-  // Footer
-  const now=new Date();
-  document.getElementById('footMethod').textContent=src;
-  document.getElementById('footTime').textContent=
-    now.toLocaleDateString()+' '+now.toLocaleTimeString();
+  const now = new Date();
+  document.getElementById('footMethod').textContent = src;
+  document.getElementById('footTime').textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
 }
 
-// ── Copy text content ────────────────────────────────────────────────────────
-async function copyText(){
-  const btn=document.getElementById('copyBtn');
-  btn.disabled=true;btn.textContent='Copying…';
+// ── Download — GYO-style filename ─────────────────────────────────
+async function downloadCard() {
+  const imgBtn = document.getElementById('dlBtn');
+  const imgBtn2 = document.getElementById('copyImgBtn');
+  if (imgBtn) { imgBtn.disabled = true; imgBtn.textContent = '⏳…'; }
+  if (imgBtn2) { imgBtn2.disabled = true; imgBtn2.textContent = '⏳ Rendering…'; }
 
-  if(!lastData){btn.disabled=false;btn.textContent='Copy text 📋';return;}
-
-  const d=lastData;
-  const now=new Date();
-  let text='';
-
-  // Chapter number + titles
-  text += `Chapter ${d.chapter}\n`;
-  text += `${d.title.zh}\n`;
-  text += `${d.title.hv}\n`;
-  text += `${d.title.en}\n`;
-  text += '\n';
-
-  // Content lines
-  d.lines.forEach(l=>{
-    text += `${l.no}. ${l.zh}\n`;
-    text += `   ${l.hv}\n`;
-    text += `   ${l.en}\n`;
-    text += '\n';
-  });
-
-  // Footer
-  text += `${lastSrc} · ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
-
-  try{
-    await navigator.clipboard.writeText(text);
-    btn.textContent='Copied ✓';
-    setTimeout(()=>{btn.disabled=false;btn.textContent='Copy text 📋';},2000);
-  }catch(e){
-    // Fallback for browsers that block clipboard
-    const ta=document.createElement('textarea');
-    ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
-    document.body.appendChild(ta);ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    btn.textContent='Copied ✓';
-    setTimeout(()=>{btn.disabled=false;btn.textContent='Copy text 📋';},2000);
-  }
-}
-
-// ── Download — exportCard only, no topbar ────────────────────────────────────
-async function downloadCard(){
-  const btn=document.getElementById('dlBtn');
-  btn.disabled=true;btn.textContent='⏳ Rendering…';
-  try{
-    const card=document.getElementById('exportCard');
-    const cvs=await html2canvas(card,{
-      backgroundColor:null,
-      scale:2,useCORS:true,allowTaint:false,logging:false,
-      onclone:doc=>{
-        doc.querySelectorAll('.c-zh,.t-zh').forEach(el=>{
-          el.style.textShadow='0 0 6px rgba(255,255,255,1),0 0 14px rgba(255,255,255,.9),0 0 30px rgba(255,255,255,.6),0 0 55px rgba(255,255,255,.3)';
+  try {
+    const card = document.getElementById('exportCard');
+    const cvs = await html2canvas(card, {
+      backgroundColor: null,
+      scale: 2, useCORS: true, allowTaint: false, logging: false,
+      onclone: doc => {
+        doc.querySelectorAll('.c-zh,.t-zh').forEach(el => {
+          el.style.textShadow = '0 0 6px rgba(255,255,255,1),0 0 14px rgba(255,255,255,.9),0 0 30px rgba(255,255,255,.6),0 0 55px rgba(255,255,255,.3)';
         });
-        doc.querySelectorAll('.c-hv,.t-hv,.c-en,.t-en').forEach(el=>{
-          el.style.textShadow='none';
+        doc.querySelectorAll('.c-hv,.t-hv,.c-en,.t-en').forEach(el => {
+          el.style.textShadow = 'none';
         });
       }
     });
-    const link=document.createElement('a');
-    const now=new Date();
-    const ds=now.toISOString().slice(0,10);
-    const ts=now.toTimeString().slice(0,8).replace(/:/g,'-');
-    link.download=`DDJ Chapter ${lastNum} ${ds} ${ts}.png`;
-    link.href=cvs.toDataURL('image/png');link.click();
-  }catch(e){alert('Render error: '+e.message);}
-  btn.disabled=false;btn.textContent='⬇ Save as Image';
+    const link = document.createElement('a');
+    const now = new Date();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const yy = String(now.getFullYear()).slice(2);
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mn = String(now.getMinutes()).padStart(2, '0');
+    const userId = currentUser || 'Go';
+    // GYO-formula: "FW [idCode] Result Card MMDDYY HHMM.png"
+    link.download = `FW ${userId} Result Card ${mm}${dd}${yy} ${hh}${mn}.png`;
+    link.href = cvs.toDataURL('image/png');
+    link.click();
+
+    // Confirm feedback
+    const confirm = document.getElementById('fw-img-confirm');
+    if (confirm) { confirm.style.opacity = '1'; setTimeout(() => confirm.style.opacity = '0', 2500); }
+  } catch(e) {
+    alert('Render error: ' + e.message);
+  }
+
+  if (imgBtn) { imgBtn.disabled = false; imgBtn.textContent = 'Save as image 📷'; }
+  if (imgBtn2) { imgBtn2.disabled = false; imgBtn2.textContent = 'Copy Result 📷'; }
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
-resizeCv();drawWheel(0);
-window.addEventListener('resize',()=>{resizeCv();drawWheel(curRot);});
+// ── Copy text ──────────────────────────────────────────────────────
+async function copyText() {
+  if (!lastData) return;
+  const txtBtn = document.getElementById('copyTextBtn');
+  const txtBtn2 = document.getElementById('copyTxtBtn2');
+  if (txtBtn) { txtBtn.disabled = true; txtBtn.textContent = '⏳…'; }
+  if (txtBtn2) { txtBtn2.disabled = true; txtBtn2.textContent = 'Copying…'; }
+
+  const d = lastData;
+  const now = new Date();
+  let text = '';
+  text += `道德經 Fortune Wheel — Chapter ${d.chapter}\n`;
+  text += `${d.title.zh}\n`;
+  text += `${d.title.hv}\n`;
+  text += `${d.title.en}\n\n`;
+  d.lines.forEach(l => {
+    text += `${l.no}. ${l.zh}\n`;
+    text += `   ${l.hv}\n`;
+    text += `   ${l.en}\n\n`;
+  });
+  text += `${lastSrc} · ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+  text += `\nYou're using Super Portal 五 Go`;
+
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch(e) {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+
+  // Confirm feedback
+  const confirm = document.getElementById('fw-txt-confirm');
+  if (confirm) { confirm.style.opacity = '1'; setTimeout(() => confirm.style.opacity = '0', 2200); }
+
+  setTimeout(() => {
+    if (txtBtn) { txtBtn.disabled = false; txtBtn.textContent = 'Copy text 📄'; }
+    if (txtBtn2) { txtBtn2.disabled = false; txtBtn2.textContent = 'Copy Result 📄'; }
+  }, 2000);
+}
+
+// ── Init ───────────────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  const onWheel = document.getElementById('screen-fw-wheel').classList.contains('active');
+  if (onWheel) { resizeCv(); drawWheel(curRot); }
+});
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() { checkOAuthReturn(); });
+} else {
+  checkOAuthReturn();
+}
 </script>
 </body>
 </html>
