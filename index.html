@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title> Fortune Wheel FUKUBIKI (Tsutsuji) </title>
+<title>🔮 道德經 Fortune Wheel · Fukubiki</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="https://i.postimg.cc/rmmC2Gj5/2-cats-yin-yang-glow-green-linear-255-200.png">
 <link rel="apple-touch-icon" href="https://i.postimg.cc/rmmC2Gj5/2-cats-yin-yang-glow-green-linear-255-200.png">
@@ -105,7 +105,12 @@ html,body{
 #wheelCanvas{position:relative;z-index:2;border-radius:50%;box-shadow:0 8px 40px rgba(0,0,0,.5),0 0 30px rgba(0,0,180,.4);display:block;}
 .ptr-wrap{position:absolute;top:-16px;left:50%;transform:translateX(-50%);z-index:10;}
 .ptr{width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:30px solid var(--red);filter:drop-shadow(0 3px 10px rgba(192,57,43,.8));}
-.hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#3333ff,#000073);border:3px solid var(--gold);z-index:10;display:flex;align-items:center;justify-content:center;font-size:22px;pointer-events:none;}
+.hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:50%;z-index:10;cursor:pointer;overflow:hidden;animation:hubPulse 2.2s ease-in-out infinite;}
+.hub img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;}
+@keyframes hubPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(204,255,0,0.0),0 0 10px 3px rgba(204,255,0,0.55);transform:translate(-50%,-50%) scale(1);}
+  50%{box-shadow:0 0 0 8px rgba(204,255,0,0.0),0 0 22px 8px rgba(204,255,0,0.9);transform:translate(-50%,-50%) scale(1.12);}
+}
 .kw-methods {
   display: flex;
   gap: 12px;
@@ -151,9 +156,7 @@ html,body{
 }
 .kw-method-desc { font-size: clamp(9px, 2.5vw, 13px); font-style: italic; color: #000073; }
 .kw-status { font-size: 14px; font-style: italic; color: #a09888; min-height: 20px; text-align: center; }
-.spin-btn{font-family:'Cinzel',serif;font-size:14px;font-weight:600;letter-spacing:.12em;color:#fff;background:linear-gradient(135deg,#8B0000,#c0392b,#8B0000);border:1px solid rgba(184,134,11,.5);border-radius:40px;padding:14px 48px;cursor:pointer;transition:all .25s ease;box-shadow:0 4px 20px rgba(192,57,43,.4);}
-.spin-btn:hover:not(:disabled){transform:translateY(-2px);}
-.spin-btn:disabled{opacity:.5;cursor:not-allowed;}
+
 
 /* ══ ANU popup ══ */
 .anu-pop{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,40,.88);backdrop-filter:blur(6px);align-items:center;justify-content:center;}
@@ -339,11 +342,6 @@ button:active,[onclick]:active{opacity:.75!important;transform:scale(0.96)!impor
       <div class="divider"></div>
     </div>
     <div class="wheel-section">
-      <div class="wheel-wrapper">
-        <canvas id="wheelCanvas"></canvas>
-        <div class="ptr-wrap"><div class="ptr"></div></div>
-        <div class="hub">☯</div>
-      </div>
       <p style="font-size:14px;font-style:italic;color:#c8c0b0;text-align:center;margin-bottom:18px;">Choose your source of randomness</p>
       <div class="kw-methods">
         <div class="kw-method-card active" onclick="selectRNG('anu')" id="rng-anu">
@@ -362,8 +360,15 @@ button:active,[onclick]:active{opacity:.75!important;transform:scale(0.96)!impor
           <span class="kw-method-desc">Hardware entropy</span>
         </div>
       </div>
-      <div class="kw-status" id="rngSt" style="margin-bottom:8px;"></div>
-      <button class="spin-btn" id="spinBtn" onclick="spinWheel()">Get your wisdom of the day</button>
+      <div class="kw-status" id="rngSt" style="margin-bottom:16px;"></div>
+      <div class="wheel-wrapper">
+        <canvas id="wheelCanvas"></canvas>
+        <div class="ptr-wrap"><div class="ptr"></div></div>
+        <div class="hub" onclick="spinWheel()">
+          <img src="https://i.postimg.cc/rmmC2Gj5/2-cats-yin-yang-glow-green-linear-255-200.png" alt="Spin" crossorigin="anonymous">
+        </div>
+      </div>
+      <p style="font-size:14px;font-style:italic;color:#c8c0b0;text-align:center;margin-top:18px;">Press the cats at the centre to spin the wheel</p>
     </div>
 
     <div class="portal-footer">
@@ -665,7 +670,8 @@ function drawWheel(rot) {
 async function spinWheel() {
   if (spinning) return;
   spinning = true;
-  document.getElementById('spinBtn').disabled = true;
+  const hub = document.querySelector('.hub');
+  if (hub) { hub.style.animationPlayState = 'paused'; hub.style.opacity = '0.5'; hub.style.cursor = 'wait'; }
   const { n: ch, src } = await getRand();
   lastNum = ch; lastSrc = src;
   const delta = -Math.PI / 2 - ((ch - 1) * ARC + ARC / 2) + (6 + Math.floor(Math.random() * 4)) * 2 * Math.PI;
@@ -690,7 +696,7 @@ async function spinWheel() {
     document.getElementById('rngSt').textContent = `⚠ ${e.message}`;
   }
   spinning = false;
-  document.getElementById('spinBtn').disabled = false;
+  if (hub) { hub.style.animationPlayState = ''; hub.style.opacity = '1'; hub.style.cursor = 'pointer'; }
 }
 
 async function fetchCh(n) {
