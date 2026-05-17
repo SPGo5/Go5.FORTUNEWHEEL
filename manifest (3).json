@@ -1,0 +1,20 @@
+{
+  "name": "五 Go — 道德經 Fortune Wheel",
+  "short_name": "Fortune Wheel",
+  "start_url": ".",
+  "display": "browser",
+  "background_color": "#000073",
+  "theme_color": "#000073",
+  "icons": [
+    {
+      "src": "https://i.postimg.cc/rmmC2Gj5/2-cats-yin-yang-glow-green-linear-255-200.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://i.postimg.cc/rmmC2Gj5/2-cats-yin-yang-glow-green-linear-255-200.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
