@@ -106,14 +106,51 @@ html,body{
 .ptr-wrap{position:absolute;top:-16px;left:50%;transform:translateX(-50%);z-index:10;}
 .ptr{width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:30px solid var(--red);filter:drop-shadow(0 3px 10px rgba(192,57,43,.8));}
 .hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#3333ff,#000073);border:3px solid var(--gold);z-index:10;display:flex;align-items:center;justify-content:center;font-size:22px;pointer-events:none;}
-.rng-label{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-l);text-align:center;}
-.rng-sel{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
-.rng-btn{font-family:'Cinzel',serif;font-size:12px;color:var(--gold-l);background:rgba(0,0,80,.6);border:1.5px solid rgba(184,134,11,.35);border-radius:24px;padding:9px 20px;cursor:pointer;transition:all .22s ease;user-select:none;display:flex;align-items:center;gap:5px;}
-.rng-btn:hover{border-color:var(--gold);color:#fff;}
-.rng-btn.active{background:rgba(0,0,60,.9);color:var(--gold-l);border-color:var(--gold);box-shadow:0 0 0 2px var(--gold),0 0 18px 5px rgba(184,134,11,.5);transform:scale(1.07) translateY(1px);font-weight:600;}
-.rng-btn .rec{font-family:'Crimson Pro',serif;font-style:italic;font-size:11px;color:#ff6b6b;display:none;}
-.rng-btn.show-rec .rec{display:inline;}
-.rng-st{font-family:'Cinzel',serif;font-size:11px;color:var(--gold-l);min-height:15px;text-align:center;opacity:.8;}
+.kw-methods {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: 16px;
+}
+.kw-method-card {
+  flex: 1;
+  background: #ffffff;
+  border: 1.5px solid #ffffff;
+  border-radius: 12px;
+  padding: 14px 4px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
+  min-width: 0;
+}
+.kw-method-card:hover { background: #e8e8f5; }
+.kw-method-card.active {
+  border: 2.5px solid #000073;
+  background: #e8e8f5;
+  box-shadow: 0 0 0 3px rgba(0,0,115,0.3), 0 0 18px rgba(0,100,255,0.5), inset 0 2px 6px rgba(0,0,0,0.15);
+  transform: scale(1.06);
+  animation: kwMethodGlow 1.4s ease-in-out infinite alternate;
+}
+@keyframes kwMethodGlow {
+  from { box-shadow: 0 0 0 3px rgba(0,0,115,0.2), 0 0 12px rgba(0,100,255,0.35); }
+  to   { box-shadow: 0 0 0 4px rgba(0,0,115,0.4), 0 0 28px rgba(0,100,255,0.7); }
+}
+.kw-method-card:not(.active) { opacity: 0.55; transform: scale(1); }
+.kw-method-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+.kw-method-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(11px, 3vw, 18px);
+  font-weight: 700;
+  display: block;
+  color: #000073;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.kw-method-desc { font-size: clamp(9px, 2.5vw, 13px); font-style: italic; color: #000073; }
+.kw-status { font-size: 14px; font-style: italic; color: #a09888; min-height: 20px; text-align: center; }
 .spin-btn{font-family:'Cinzel',serif;font-size:14px;font-weight:600;letter-spacing:.12em;color:#fff;background:linear-gradient(135deg,#8B0000,#c0392b,#8B0000);border:1px solid rgba(184,134,11,.5);border-radius:40px;padding:14px 48px;cursor:pointer;transition:all .25s ease;box-shadow:0 4px 20px rgba(192,57,43,.4);}
 .spin-btn:hover:not(:disabled){transform:translateY(-2px);}
 .spin-btn:disabled{opacity:.5;cursor:not-allowed;}
@@ -150,29 +187,6 @@ html,body{
 }
 .ch-back-btn::before{content:'‹';font-size:22px;line-height:1;}
 .ch-back-btn:hover{color:#fff;}
-.ch-action-btns{display:flex;gap:8px;align-items:center;}
-
-/* GYO-matching result action buttons */
-.result-action-btn{
-  width:100%;padding:12px 8px;
-  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);
-  color:white;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.08em;
-  border-radius:10px;cursor:pointer;backdrop-filter:blur(4px);
-  transition:background .2s,transform .1s;
-}
-.result-action-btn:hover{background:rgba(255,255,255,0.17);}
-.result-action-btn:active{transform:scale(0.96);opacity:.75;}
-.result-action-btn:disabled{opacity:.5;cursor:not-allowed;}
-
-/* Topbar compact variants */
-.topbar-btn{
-  font-family:'Cinzel',serif;font-size:12px;font-weight:600;
-  border-radius:20px;padding:7px 14px;cursor:pointer;
-  border:none;transition:all .2s;
-}
-.topbar-btn-img{color:#000;background:linear-gradient(135deg,var(--no),#aadd00);}
-.topbar-btn-txt{color:#000;background:linear-gradient(135deg,#E0B0FF,#c070ff);}
-.topbar-btn:disabled{opacity:.5;cursor:not-allowed;}
 
 .ch-scroll{flex:1;padding:28px 20px 48px;display:flex;justify-content:center;align-items:flex-start;}
 
@@ -330,13 +344,25 @@ button:active,[onclick]:active{opacity:.75!important;transform:scale(0.96)!impor
         <div class="ptr-wrap"><div class="ptr"></div></div>
         <div class="hub">☯</div>
       </div>
-      <div class="rng-label">Entropy Source</div>
-      <div class="rng-sel">
-        <button class="rng-btn active" id="rng-anu" onclick="selectRNG('anu')">⚛ Quantum (ANU)</button>
-        <button class="rng-btn" id="rng-atm" onclick="selectRNG('atm')">🌩 Atmospheric <span class="rec">(recommended)</span></button>
-        <button class="rng-btn" id="rng-crypto" onclick="selectRNG('crypto')">🔒 Browser Crypto</button>
+      <p style="font-size:14px;font-style:italic;color:#c8c0b0;text-align:center;margin-bottom:18px;">Choose your source of randomness</p>
+      <div class="kw-methods">
+        <div class="kw-method-card active" onclick="selectRNG('anu')" id="rng-anu">
+          <span class="kw-method-icon">⚛️</span>
+          <span class="kw-method-name">Quantum</span>
+          <span class="kw-method-desc">ANU vacuum</span>
+        </div>
+        <div class="kw-method-card" onclick="selectRNG('atm')" id="rng-atm">
+          <span class="kw-method-icon">🌩</span>
+          <span class="kw-method-name">Atm.</span>
+          <span class="kw-method-desc">Atmospheric noise</span>
+        </div>
+        <div class="kw-method-card" onclick="selectRNG('crypto')" id="rng-crypto">
+          <span class="kw-method-icon">🔐</span>
+          <span class="kw-method-name">Crypto</span>
+          <span class="kw-method-desc">Hardware entropy</span>
+        </div>
       </div>
-      <div class="rng-st" id="rngSt">⚛ Quantum (ANU) selected</div>
+      <div class="kw-status" id="rngSt" style="margin-bottom:8px;"></div>
       <button class="spin-btn" id="spinBtn" onclick="spinWheel()">Get your wisdom of the day</button>
     </div>
 
@@ -355,10 +381,6 @@ button:active,[onclick]:active{opacity:.75!important;transform:scale(0.96)!impor
   <div class="ch-page">
     <div class="ch-topbar">
       <button class="ch-back-btn" onclick="fwGoBack()"> Back</button>
-      <div class="ch-action-btns">
-        <button class="topbar-btn topbar-btn-img" id="dlBtn" onclick="downloadCard()">Save as image 📷</button>
-        <button class="topbar-btn topbar-btn-txt" id="copyTextBtn" onclick="copyText()">Copy text 📄</button>
-      </div>
     </div>
     <div class="ch-scroll">
       <div id="exportCard">
@@ -387,21 +409,18 @@ button:active,[onclick]:active{opacity:.75!important;transform:scale(0.96)!impor
       </div>
     </div>
 
-    <!-- GYO-style Copy Result buttons below card -->
-    <div style="display:flex;gap:10px;width:100%;max-width:520px;padding:0 20px 12px;">
+    <div style="width:100%;height:1px;background:rgba(255,255,255,0.15);margin-bottom:16px;"></div>
+    <div style="display:flex;gap:10px;width:100%;max-width:520px;padding:0 20px;margin-bottom:2px;">
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-        <button class="result-action-btn" id="copyImgBtn" onclick="downloadCard()">Copy Result 📷</button>
-        <span id="fw-img-confirm" class="action-confirm">Downloaded!</span>
+        <button onclick="downloadCard()" style="width:100%;padding:12px 8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);color:white;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.08em;border-radius:10px;cursor:pointer;backdrop-filter:blur(4px);">Copy Result 📷</button>
+        <span id="fw-img-confirm" style="font-size:11px;color:rgba(255,255,255,0.6);font-style:italic;opacity:0;transition:opacity 0.3s;height:16px;">Downloaded!</span>
       </div>
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-        <button class="result-action-btn" id="copyTxtBtn2" onclick="copyText()">Copy Result 📄</button>
-        <span id="fw-txt-confirm" class="action-confirm">Copied!</span>
+        <button onclick="copyText()" style="width:100%;padding:12px 8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);color:white;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.08em;border-radius:10px;cursor:pointer;backdrop-filter:blur(4px);">Copy Result 📄</button>
+        <span id="fw-txt-confirm" style="font-size:11px;color:rgba(255,255,255,0.6);font-style:italic;opacity:0;transition:opacity 0.3s;height:16px;">Copied!</span>
       </div>
     </div>
-    <div style="width:100%;max-width:520px;padding:0 20px 6px;text-align:center;">
-      <button onclick="fwGoBack()" style="width:100%;padding:13px;background:rgba(255,245,220,0.08);border:1px solid rgba(255,245,220,0.2);color:rgba(255,245,220,0.7);font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.12em;border-radius:10px;cursor:pointer;margin-bottom:4px;">Spin Again</button>
-    </div>
-    <div style="font-size:11px;color:rgba(255,245,220,0.3);text-align:center;font-family:'Cinzel',serif;letter-spacing:0.1em;padding-bottom:8px;">You're using Super Portal 五 Go</div>
+    <div style="width:100%;height:1px;background:rgba(255,255,255,0.15);margin:12px 0 16px;"></div>
 
     <div class="portal-footer">
       <div class="footer-credit">Developed by <strong>Claude</strong> · Conceived &amp; directed by <strong>SPGo</strong></div>
@@ -537,18 +556,14 @@ let selRNG = 'anu', anuRes = null;
 
 function selectRNG(m) {
   selRNG = m;
-  document.querySelectorAll('.rng-btn').forEach(b => b.classList.remove('active', 'show-rec'));
+  document.querySelectorAll('.kw-method-card').forEach(c => c.classList.remove('active'));
   document.getElementById('rng-' + m).classList.add('active');
-  document.getElementById('rngSt').textContent = {
-    anu: '⚛ Quantum (ANU) selected',
-    atm: '🌩 Atmospheric selected',
-    crypto: '🔒 Browser Crypto selected'
-  }[m];
+  const labels = { anu: '⚛️ Quantum (ANU) selected', atm: '🌩 Atmospheric selected', crypto: '🔐 Crypto selected' };
+  document.getElementById('rngSt').textContent = labels[m] || '';
 }
 
 function resolveANU(c) {
   document.getElementById('anuPop').classList.remove('visible');
-  if (c === 'atm') document.getElementById('rng-atm').classList.add('show-rec');
   selectRNG(c);
   if (anuRes) { anuRes(c); anuRes = null; }
 }
@@ -718,11 +733,6 @@ function render(data, src) {
 
 // ── Download — GYO-style filename ─────────────────────────────────
 async function downloadCard() {
-  const imgBtn = document.getElementById('dlBtn');
-  const imgBtn2 = document.getElementById('copyImgBtn');
-  if (imgBtn) { imgBtn.disabled = true; imgBtn.textContent = '⏳…'; }
-  if (imgBtn2) { imgBtn2.disabled = true; imgBtn2.textContent = '⏳ Rendering…'; }
-
   try {
     const card = document.getElementById('exportCard');
     const cvs = await html2canvas(card, {
@@ -745,30 +755,19 @@ async function downloadCard() {
     const hh = String(now.getHours()).padStart(2, '0');
     const mn = String(now.getMinutes()).padStart(2, '0');
     const userId = currentUser || 'Go';
-    // GYO-formula: "FW [idCode] Result Card MMDDYY HHMM.png"
     link.download = `FW ${userId} Result Card ${mm}${dd}${yy} ${hh}${mn}.png`;
     link.href = cvs.toDataURL('image/png');
     link.click();
-
-    // Confirm feedback
     const confirm = document.getElementById('fw-img-confirm');
     if (confirm) { confirm.style.opacity = '1'; setTimeout(() => confirm.style.opacity = '0', 2500); }
   } catch(e) {
     alert('Render error: ' + e.message);
   }
-
-  if (imgBtn) { imgBtn.disabled = false; imgBtn.textContent = 'Save as image 📷'; }
-  if (imgBtn2) { imgBtn2.disabled = false; imgBtn2.textContent = 'Copy Result 📷'; }
 }
 
 // ── Copy text ──────────────────────────────────────────────────────
 async function copyText() {
   if (!lastData) return;
-  const txtBtn = document.getElementById('copyTextBtn');
-  const txtBtn2 = document.getElementById('copyTxtBtn2');
-  if (txtBtn) { txtBtn.disabled = true; txtBtn.textContent = '⏳…'; }
-  if (txtBtn2) { txtBtn2.disabled = true; txtBtn2.textContent = 'Copying…'; }
-
   const d = lastData;
   const now = new Date();
   let text = '';
@@ -783,26 +782,17 @@ async function copyText() {
   });
   text += `${lastSrc} · ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
   text += `\nYou're using Super Portal 五 Go`;
-
   try {
     await navigator.clipboard.writeText(text);
   } catch(e) {
-    // Fallback
     const ta = document.createElement('textarea');
     ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
     document.body.appendChild(ta); ta.select();
     document.execCommand('copy');
     document.body.removeChild(ta);
   }
-
-  // Confirm feedback
   const confirm = document.getElementById('fw-txt-confirm');
   if (confirm) { confirm.style.opacity = '1'; setTimeout(() => confirm.style.opacity = '0', 2200); }
-
-  setTimeout(() => {
-    if (txtBtn) { txtBtn.disabled = false; txtBtn.textContent = 'Copy text 📄'; }
-    if (txtBtn2) { txtBtn2.disabled = false; txtBtn2.textContent = 'Copy Result 📄'; }
-  }, 2000);
 }
 
 // ── Init ───────────────────────────────────────────────────────────
