@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>🔮 道德經 Fortune Wheel · Fukubiki</title>
+<title>Fortune Wheel FUKUBIKI (Tsutsuji)</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" href="https://i.postimg.cc/rmmC2Gj5/2-cats-yin-yang-glow-green-linear-255-200.png">
+<link rel="icon" type="image/png" href="https://i.postimg.cc/65t7105N/2-cats-yin-yang-glow-green-linear-255-200-Tsutsuji.png">
 <link rel="apple-touch-icon" href="https://i.postimg.cc/rmmC2Gj5/2-cats-yin-yang-glow-green-linear-255-200.png">
 <meta name="theme-color" content="#000073">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -105,11 +105,11 @@ html,body{
 #wheelCanvas{position:relative;z-index:2;border-radius:50%;box-shadow:0 8px 40px rgba(0,0,0,.5),0 0 30px rgba(0,0,180,.4);display:block;}
 .ptr-wrap{position:absolute;top:-16px;left:50%;transform:translateX(-50%);z-index:10;}
 .ptr{width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:30px solid var(--red);filter:drop-shadow(0 3px 10px rgba(192,57,43,.8));}
-.hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:50%;z-index:10;cursor:pointer;overflow:hidden;animation:hubPulse 2.2s ease-in-out infinite;}
-.hub img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;}
+.hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:50%;z-index:10;cursor:pointer;overflow:visible;animation:hubPulse 4s ease-in-out infinite;}
+.hub img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;background:transparent;}
 @keyframes hubPulse{
-  0%,100%{box-shadow:0 0 0 0 rgba(204,255,0,0.0),0 0 10px 3px rgba(204,255,0,0.55);transform:translate(-50%,-50%) scale(1);}
-  50%{box-shadow:0 0 0 8px rgba(204,255,0,0.0),0 0 22px 8px rgba(204,255,0,0.9);transform:translate(-50%,-50%) scale(1.12);}
+  0%,100%{filter:drop-shadow(0 0 5px rgba(203,255,192,0.4));transform:translate(-50%,-50%) scale(1);}
+  50%{filter:drop-shadow(0 0 14px rgba(203,255,192,0.75));transform:translate(-50%,-50%) scale(1.05);}
 }
 .kw-methods {
   display: flex;
@@ -361,14 +361,14 @@ button:active,[onclick]:active{opacity:.75!important;transform:scale(0.96)!impor
         </div>
       </div>
       <div class="kw-status" id="rngSt" style="margin-bottom:16px;"></div>
+      <p style="font-size:14px;font-style:italic;color:#c8c0b0;text-align:center;margin-bottom:14px;">Press the cats at the centre to spin the wheel</p>
       <div class="wheel-wrapper">
         <canvas id="wheelCanvas"></canvas>
         <div class="ptr-wrap"><div class="ptr"></div></div>
         <div class="hub" onclick="spinWheel()">
-          <img src="https://i.postimg.cc/rmmC2Gj5/2-cats-yin-yang-glow-green-linear-255-200.png" alt="Spin" crossorigin="anonymous">
+          <img src="https://i.postimg.cc/xTXrYrdq/2-cats-yin-yang-no-glow-with-tsutsuji.png" alt="Spin" crossorigin="anonymous">
         </div>
       </div>
-      <p style="font-size:14px;font-style:italic;color:#c8c0b0;text-align:center;margin-top:18px;">Press the cats at the centre to spin the wheel</p>
     </div>
 
     <div class="portal-footer">
