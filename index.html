@@ -99,14 +99,14 @@ html,body{
 .hdr-en{font-family:'Cinzel',serif;font-style:normal;font-size:clamp(11px,2vw,15px);color:rgba(255,255,255,0.4);letter-spacing:.15em;margin-top:6px;}
 .divider{width:140px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:16px auto;}
 .wheel-section{display:flex;flex-direction:column;align-items:center;gap:20px;padding:0 20px 20px;width:100%;}
-.wheel-wrapper{position:relative;width:min(500px,94vw);height:min(500px,94vw);}
+.wheel-wrapper{position:relative;width:min(500px,94vw);height:min(500px,94vw);overflow:visible;}
 .wheel-wrapper::before{content:'';position:absolute;inset:-9px;border-radius:50%;background:conic-gradient(var(--gold) 0deg,var(--gold-l) 45deg,var(--gold) 90deg,var(--gold-l) 135deg,var(--gold) 180deg,var(--gold-l) 225deg,var(--gold) 270deg,var(--gold-l) 315deg,var(--gold) 360deg);z-index:0;filter:drop-shadow(0 0 10px rgba(184,134,11,.6));}
 .wheel-wrapper::after{content:'';position:absolute;inset:-4px;border-radius:50%;background:var(--bg);z-index:1;}
 #wheelCanvas{position:relative;z-index:2;border-radius:50%;box-shadow:0 8px 40px rgba(0,0,0,.5),0 0 30px rgba(0,0,180,.4);display:block;}
 .ptr-wrap{position:absolute;top:-16px;left:50%;transform:translateX(-50%);z-index:10;}
 .ptr{width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:30px solid var(--red);filter:drop-shadow(0 3px 10px rgba(192,57,43,.8));}
-.hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:50%;z-index:10;cursor:pointer;overflow:visible;animation:hubPulse 4s ease-in-out infinite;}
-.hub img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;background:transparent;}
+.hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:110px;height:110px;border-radius:0;background:none;border:none;z-index:20;cursor:pointer;overflow:visible;animation:hubPulse 4s ease-in-out infinite;}
+.hub img{width:100%;height:100%;object-fit:contain;display:block;background:transparent;border-radius:0;}
 @keyframes hubPulse{
   0%,100%{filter:drop-shadow(0 0 5px rgba(203,255,192,0.4));transform:translate(-50%,-50%) scale(1);}
   50%{filter:drop-shadow(0 0 14px rgba(203,255,192,0.75));transform:translate(-50%,-50%) scale(1.05);}
@@ -671,7 +671,7 @@ async function spinWheel() {
   if (spinning) return;
   spinning = true;
   const hub = document.querySelector('.hub');
-  if (hub) { hub.style.animationPlayState = 'paused'; hub.style.opacity = '0.5'; hub.style.cursor = 'wait'; }
+  if (hub) { hub.style.animationPlayState = 'paused'; hub.style.cursor = 'wait'; }
   const { n: ch, src } = await getRand();
   lastNum = ch; lastSrc = src;
   const delta = -Math.PI / 2 - ((ch - 1) * ARC + ARC / 2) + (6 + Math.floor(Math.random() * 4)) * 2 * Math.PI;
@@ -696,7 +696,7 @@ async function spinWheel() {
     document.getElementById('rngSt').textContent = `⚠ ${e.message}`;
   }
   spinning = false;
-  if (hub) { hub.style.animationPlayState = ''; hub.style.opacity = '1'; hub.style.cursor = 'pointer'; }
+  if (hub) { hub.style.animationPlayState = ''; hub.style.cursor = 'pointer'; }
 }
 
 async function fetchCh(n) {
