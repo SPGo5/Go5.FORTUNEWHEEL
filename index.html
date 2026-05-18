@@ -107,13 +107,6 @@ html,body{
 .ptr{width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:30px solid var(--red);filter:drop-shadow(0 3px 10px rgba(192,57,43,.8));}
 .hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:110px;height:110px;border-radius:0;background:none;border:none;z-index:20;cursor:pointer;overflow:visible;animation:hubPulse 4s ease-in-out infinite;}
 .hub img{width:100%;height:100%;object-fit:contain;display:block;background:transparent;border-radius:0;}
-.hub:active{
-  animation-play-state:paused!important;
-  transform:translate(-50%,-50%) scale(0.94)!important;
-  filter:drop-shadow(0 0 8px rgba(203,255,192,0.5))!important;
-  transition:transform .08s ease,filter .08s ease!important;
-  opacity:1!important;
-}
 @keyframes hubPulse{
   0%,100%{filter:drop-shadow(0 0 8px rgba(203,255,192,0.7)) drop-shadow(0 0 16px rgba(203,255,192,0.4));transform:translate(-50%,-50%) scale(1);}
   50%{filter:drop-shadow(0 0 18px rgba(203,255,192,1)) drop-shadow(0 0 35px rgba(203,255,192,0.75));transform:translate(-50%,-50%) scale(1.05);}
@@ -221,6 +214,7 @@ html,body{
 @keyframes haircutPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 
 button:active,[onclick]:active{opacity:.75!important;transform:scale(0.96)!important;transition:opacity .08s,transform .08s!important;}
+.hub:active{opacity:1!important;transform:translate(-50%,-50%) scale(0.93)!important;transition:transform .1s ease!important;animation-play-state:paused!important;filter:drop-shadow(0 0 8px rgba(203,255,192,0.5))!important;}
 </style>
 </head>
 <body>
